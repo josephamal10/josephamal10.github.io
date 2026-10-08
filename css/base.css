@@ -1,0 +1,126 @@
+/* ==========================================================================
+   Base — reset, type defaults, accessibility utilities, focus styles.
+   Owned by FOUNDATION.
+   ========================================================================== */
+
+*, *::before, *::after { box-sizing: border-box; }
+
+html {
+  /* Type scales with the page so every page keeps its designed proportions: with its width, and
+     on short screens (laptops at 1366×657 once the browser chrome is gone) with its height too,
+     so a page designed for 1440×900 still fits instead of scrolling. */
+  font-size: clamp(13px, min(calc(var(--page-w) / 36), calc(var(--page-h) / 50)), 17.5px);
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+  height: 100%;
+  overflow: hidden;
+  background: var(--desk-1);
+  /* no grey tap flash on touch screens; every control has its own focus / active state */
+  -webkit-tap-highlight-color: transparent;
+}
+
+@media (max-width: 599px) {
+  html { font-size: 15.5px; }
+}
+@media (orientation: landscape) and (max-height: 560px) {
+  html { font-size: 13.5px; }
+}
+
+body {
+  margin: 0;
+  height: 100%;
+  overflow: hidden;
+  background: var(--desk-1);
+  color: var(--ink);
+  font-family: var(--font-serif);
+  font-optical-sizing: auto;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  overscroll-behavior: none;
+}
+
+h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd, ul, ol { margin: 0; }
+ul, ol { padding: 0; }
+h1, h2, h3, h4, h5, h6 { font-weight: 600; line-height: 1.15; text-wrap: balance; }
+p, li, dd, figcaption { text-wrap: pretty; }
+img, svg, video, canvas { display: block; max-width: 100%; }
+img { height: auto; }
+button, input, select, textarea { font: inherit; color: inherit; }
+button { cursor: pointer; background: none; border: 0; padding: 0; }
+a { color: inherit; }
+table { border-collapse: collapse; }
+time, .tnum { font-variant-numeric: tabular-nums; }
+
+[hidden] { display: none !important; }
+
+/* ---- accessibility utilities ---- */
+
+.visually-hidden {
+  position: absolute !important;
+  width: 1px; height: 1px;
+  margin: -1px; padding: 0; border: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+.skip-link {
+  position: fixed;
+  z-index: 1000;
+  top: .75rem; left: .75rem;
+  padding: .55rem .9rem;
+  font: 500 var(--fs-sm)/1.2 var(--font-sans);
+  letter-spacing: .02em;
+  color: var(--desk-0);
+  background: var(--tab-ink);
+  border-radius: 2px;
+  text-decoration: none;
+  transform: translateY(calc(-100% - 1.5rem));
+}
+.skip-link:focus, .skip-link:focus-visible { transform: none; outline: 2px solid var(--focus-dark); outline-offset: 3px; }
+
+/* Focus is chosen by SURFACE, not by ancestor: pen-blue on paper, pale ink on dark boards.
+   Dark is the default inside the desk; anything printed on paper switches back to pen. */
+:focus { outline: none; }
+:focus-visible { outline: 2px solid var(--focus-paper); outline-offset: 2px; border-radius: 1px; }
+.desk :focus-visible { outline-color: var(--focus-dark); }
+.paper :focus-visible,
+.on-paper:focus-visible,
+.on-paper :focus-visible,
+.inner-cover__plate :focus-visible { outline-color: var(--focus-paper); }
+/* Headings receive programmatic focus after a page turn; they are not controls. */
+[tabindex="-1"]:focus, [tabindex="-1"]:focus-visible { outline: none; }
+
+::selection { background: rgba(35, 50, 76, .18); color: inherit; }
+
+/* ---- no-JS fallback ---- */
+
+.noscript {
+  position: fixed;
+  z-index: 2000;
+  inset: 0;
+  overflow: auto;
+  padding: max(2rem, 8vh) 1.5rem 2rem;
+  background: var(--desk-1);
+  color: var(--tab-ink);
+  font: 400 1rem/1.6 var(--font-sans);
+}
+.noscript > * { max-width: 34rem; margin-inline: auto; }
+.noscript p + p, .noscript ul { margin-top: .4rem; }
+.noscript ul { list-style: none; margin-top: .8rem; }
+.noscript a { color: #fff; text-underline-offset: 3px; }
+.noscript__eyebrow { font: 500 .75rem/1 var(--font-sans); letter-spacing: .12em; text-transform: uppercase; color: var(--ink-4); }
+.noscript__name { margin-top: .8rem !important; font: 600 2rem/1.1 var(--font-display); color: #f3efe6; }
+.noscript__note { margin-top: 1.4rem !important; color: var(--ink-4); }
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; }
+}
+
+/* Higher contrast on request: the lightest ink steps up one shade. */
+@media (prefers-contrast: more) {
+  :root { --ink-3: var(--ink-2); --ink-4: #6d7178; --rule: rgba(60, 38, 16, .22); }
+}

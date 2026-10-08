@@ -1,0 +1,200 @@
+/* ==========================================================================
+   Contact — the notebook's last page. Owned by PAGES-A.
+   The pre-printed address page at the back of a notebook: small printed
+   labels, ruled fields, the details written onto the lines. Scoped under
+   .contact and built on the shared primitives in css/paper.css.
+   ========================================================================== */
+
+.contact {
+  /* page unit (as on the About page): follows the page's size on short laptop screens */
+  --u: 1rem;
+  --u-xs: max(10px, calc(.72 * var(--u)));
+  --contact-key-w: max(calc(5.4 * var(--u)), 64px);
+  --contact-line: rgba(60, 38, 16, .22);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+@media (min-width: 600px) {
+  .contact { --u: max(13px, min(1rem, calc(var(--page-w) / 36))); }
+}
+
+.contact__header { margin-bottom: calc(1.1 * var(--u)); }
+.contact__header > .page-header__eyebrow { font-size: var(--u-xs); margin-bottom: calc(.7 * var(--u)); }
+.contact__header > .page-header__title { font-size: calc(2.1 * var(--u)); }
+
+/* ---------------------------------------------------------------- the address fields */
+
+.contact__card { margin: 0; }
+
+.contact__field {
+  display: grid;
+  grid-template-columns: var(--contact-key-w) minmax(0, 1fr);
+  column-gap: calc(.9 * var(--u));
+  align-items: baseline;
+  padding: calc(1.45 * var(--u)) 0 calc(.42 * var(--u));
+  /* the printed line the value is written on */
+  border-bottom: 1px solid var(--contact-line);
+}
+
+.contact__key {
+  font: 500 var(--u-xs)/1.2 var(--font-mono);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.contact__value {
+  margin: 0;
+  min-width: 0;
+  font: 500 calc(1.12 * var(--u))/1.3 var(--font-serif);
+  letter-spacing: -.004em;
+  color: var(--ink);
+  overflow-wrap: anywhere;
+}
+.contact__field--name .contact__value {
+  font-size: calc(1.42 * var(--u));
+  font-weight: 600;
+  letter-spacing: -.014em;
+}
+.contact__nobr { white-space: nowrap; }
+.contact__field--phone .contact__value { font-variant-numeric: tabular-nums lining-nums; }
+
+/* links written on the line: the printed rule already sits under them, so the
+   link's own underline only appears on hover / focus */
+.contact__link,
+.contact__link.ink-link {
+  color: inherit;
+  text-decoration-line: underline;
+  text-decoration-thickness: 1px;
+  text-underline-offset: .22em;
+  text-decoration-color: transparent;
+  transition: color .15s ease, text-decoration-color .15s ease;
+}
+.contact__link:hover {
+  color: var(--pen);
+  text-decoration-color: currentColor;
+}
+.contact__link:focus-visible {
+  outline: 2px solid var(--focus-paper);
+  outline-offset: 3px;
+  text-decoration-color: currentColor;
+}
+.contact__link .ink-link__ext { display: inline; font-size: .7em; margin-left: .22em; vertical-align: .12em; }
+
+/* ---------------------------------------------------------------- sign-off */
+
+.contact__signoff {
+  margin: calc(1.9 * var(--u)) 0 0;
+  padding-right: calc(.4 * var(--u));
+  text-align: right;
+}
+.contact__signoff .annotation {
+  margin: 0;
+  font-size: calc(1.6 * var(--u));
+  transform-origin: 100% 60%;
+}
+
+/* ---------------------------------------------------------------- index */
+
+.contact__space { flex: 1 1 auto; min-height: calc(1.8 * var(--u)); }
+
+.contact__index {
+  position: relative;
+  padding-top: calc(.85 * var(--u));
+  border-top: 1px solid rgba(60, 38, 16, .2);
+}
+/* technical-drawing end ticks, as on the other pages' ledgers */
+.contact__index::before,
+.contact__index::after {
+  content: "";
+  position: absolute;
+  top: -4px;
+  width: 1px;
+  height: 7px;
+  background: rgba(60, 38, 16, .38);
+}
+.contact__index::before { left: 0; }
+.contact__index::after { right: 0; }
+
+.contact .contact__index-title {
+  font: 500 var(--u-xs)/1.3 var(--font-mono);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.contact__index-list {
+  margin: calc(.5 * var(--u)) 0 0;
+  padding: 0;
+  columns: 2;
+  column-gap: calc(2.2 * var(--u));
+}
+.contact .contact__index-list > li {
+  margin: 0;
+  padding: 0;
+  break-inside: avoid;
+}
+
+.contact__index-entry {
+  display: flex;
+  align-items: baseline;
+  gap: calc(.45 * var(--u));
+  padding: calc(.26 * var(--u)) 0;
+  font: 400 var(--u-xs)/1.35 var(--font-mono);
+  letter-spacing: .06em;
+  color: var(--ink-2);
+  text-decoration: none;
+}
+.contact__index-name { flex: none; }
+.contact__index-leader {
+  flex: 1 1 auto;
+  min-width: calc(1 * var(--u));
+  border-bottom: 1px dotted rgba(60, 38, 16, .34);
+  transform: translateY(-.28em);
+}
+.contact__index-num {
+  flex: none;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+a.contact__index-entry:hover { color: var(--pen); }
+a.contact__index-entry:hover .contact__index-num { color: var(--pen); }
+a.contact__index-entry:focus-visible { outline: 2px solid var(--focus-paper); outline-offset: 2px; }
+.contact__index-item.is-here .contact__index-entry { color: var(--ink-3); }
+.contact__index-item.is-here .contact__index-num { color: var(--ink-3); }
+
+/* ---------------------------------------------------------------- phones */
+
+@media (max-width: 599px) {
+  .contact__header { margin-bottom: calc(.6 * var(--u)); }
+  .contact__field {
+    grid-template-columns: minmax(0, 1fr);
+    row-gap: calc(.3 * var(--u));
+    padding: calc(1 * var(--u)) 0 calc(.4 * var(--u));
+  }
+  .contact__value { font-size: calc(1.1 * var(--u)); }
+  .contact__field--name .contact__value { font-size: calc(1.32 * var(--u)); }
+  .contact__signoff { margin-top: calc(1.2 * var(--u)); }
+  .contact__index-list { column-gap: calc(1.4 * var(--u)); }
+}
+
+@media (max-width: 339px) {
+  .contact__index-list { columns: 1; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .contact__link, .contact__link.ink-link { transition: none; }
+}
+
+/* ---------------------------------------------------------------- open to, and the résumé */
+.contact__open {
+  margin-top: calc(1.5 * var(--u));
+  padding-left: calc(.8 * var(--u));
+  border-left: 1px solid rgba(60, 38, 16, .4);
+}
+.contact__open-lead { font: italic 500 calc(.9 * var(--u))/1.3 var(--font-serif); color: var(--ink-3); }
+.contact__open-roles { margin-top: calc(.2 * var(--u)); font: 500 calc(1.05 * var(--u))/1.35 var(--font-serif); color: var(--ink); }
+.contact__resume { font-weight: 600; }

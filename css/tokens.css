@@ -1,0 +1,116 @@
+/* ==========================================================================
+   Design tokens — one committed visual world (no light/dark switching).
+   Owned by FOUNDATION. Components needing a new token define it under their
+   own root class instead of editing this file.
+   ========================================================================== */
+
+:root {
+  /* desk — neutral charcoal; the only warmth in the scene is paper and coffee */
+  --desk-0: #060606; --desk-1: #0d0d0d; --desk-2: #151515; --desk-3: #1d1d1d;
+  /* notebook cover */
+  --cover-0: #0f0f0f; --cover-1: #181818; --cover-2: #222222; --cover-edge: #2b2b2b;
+  --emboss-hi: rgba(255, 255, 255, .075); --emboss-lo: rgba(0, 0, 0, .7);
+  /* metal & ceramic */
+  --chrome-hi: #e4e6ea; --chrome-mid: #8d9097; --chrome-lo: #3a3c41;
+  /* paper: aged tan (the page images in assets/img/pages; these are their mean tones) */
+  --paper: #e8c99d; --paper-2: #dfbf92; --paper-3: #d2b184; --paper-edge: #b8966a; --paper-verso: #dcbb8f;
+  --paper-shadow: rgba(60, 36, 12, .25);
+  /* ink: brown-black printing ink */
+  --ink: #2a190b; --ink-2: #3b2614; --ink-3: #5b4027; --ink-4: #8a6a45;
+  /* --ink-3 is the lightest ink allowed for small text: about 5.8:1 on --paper, and still above
+     4.5:1 on the darker stains near the page edges.
+     --ink-4 is for decoration only (rules, line numbers), never for text people need to read. */
+  --rule: rgba(60, 38, 16, .2); --dot: rgba(60, 38, 16, .24);
+  --pen: #23324c;           /* blue-black fountain-pen ink: handwritten annotations only */
+  --stamp: #8a3b31;         /* muted oxblood: rubber-stamp marks only, sparingly */
+  --tab-0: #1b1b1b; --tab-1: #262626; --tab-ink: #d9d4c8;
+
+  /* type */
+  --font-display: 'Cinzel', 'Times New Roman', serif;          /* headings: Roman inscription capitals */
+  --font-serif: 'Alegreya', Georgia, serif;                   /* text */
+  --font-sans: 'Alegreya SC', 'Alegreya', Georgia, serif;     /* small labels, running heads, tabs */
+  --font-mono: 'Alegreya SC', 'Alegreya', Georgia, serif;     /* data: dates, codes, chips, folios */
+  --font-code: 'Courier Prime', ui-monospace, Consolas, monospace;   /* code excerpts only */
+  --font-hand: 'Caveat', 'Segoe Print', cursive;
+
+  /* scale (page content) */
+  --fs-xs: .74rem; --fs-sm: .84rem; --fs-md: .98rem; --fs-lg: 1.12rem; --fs-xl: 1.34rem; --fs-2xl: 1.72rem;
+
+  /* Type roles:
+     - Headings: Cinzel (capitals; set a size smaller than a lowercase face, it is wide).
+     - Text: Alegreya. Kickers / eyebrows: italic Alegreya, sentence case.
+     - Small field labels and data (dates, page refs, codes, chips, folios): Alegreya SC.
+     - Code excerpts: Courier Prime. */
+  --fs-label: max(10.5px, .7rem);
+  --track-label: .12em;
+  --fs-kicker: 1rem;
+
+  /* motion */
+  --ease-page: cubic-bezier(.45, .05, .2, 1);
+  --ease-camera: cubic-bezier(.65, 0, .25, 1);
+  --dur-page: 760ms;
+  --dur-open: 1500ms;
+
+  /* geometry: the natural reading size of the one open page.
+     A tall portrait page (.66 of its height, like the 9:16 page papers, never past 640px). */
+  --page-h: min(92svh, 1040px);
+  --page-w: min(calc(var(--page-h) * .66), 640px, calc(100vw - 7rem));
+
+  /* notebook frame (FOUNDATION extensions) */
+  --book-perspective: 3600px;      /* deep enough that a lifted sheet never balloons past the viewport */
+  --tabs-h: 0px;                   /* room reserved above the book for top-edge tabs */
+  --tab-reach: 2.05rem;            /* how far a fore-edge index tab protrudes */
+  --edge-step: 1.6px;              /* offset of each visible page-edge layer */
+  --board-over: 5px;               /* back board overhang ("squares") */
+  /* Fore-edge corners. Pages, the page block and the boards share ONE radius (a length, so the
+     corners are circular, not stretched ellipses): if the cover were rounder than the pages, the
+     page corners would poke out past it when closed. ~5% of the page width, soft like the reference. */
+  --radius-fore: clamp(10px, calc(var(--page-w) * .05), 30px);   /* page corners on the fore-edge */
+  --radius-board: var(--radius-fore);                              /* cover board corners on the fore-edge */
+  --page-pad-x: clamp(1.15rem, 7.5%, 3.1rem);
+  --page-pad-top: clamp(.9rem, 3.2%, 1.6rem);
+  /* extremely fine paper grain (warm, low alpha) — used by css/paper.css.
+     baseFrequency .5: the tooth stays about 2px wide, so it never aliases into moiré when the
+     closed camera scales the book down. */
+  --paper-grain: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.5' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .23 0 0 0 0 .13 .36 0 0 0 -.11'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  --focus-paper: var(--pen);
+  --focus-dark: var(--tab-ink);
+}
+
+/* Index tabs sit on the fore-edge in landscape when there is room for them (≥ 900px wide),
+   and also on short landscape screens (phones on their side), where a top strip would eat
+   the little height there is. Everywhere else they run along the top edge. */
+@media (orientation: portrait), (max-width: 899.98px) and (min-height: 560.02px) {
+  :root {
+    --tabs-h: 2rem;
+    --page-h: min(calc(100svh - 5.5rem), 1040px);
+    --page-w: min(calc(var(--page-h) * .66), calc(100vw - 7rem));
+  }
+}
+
+/* Phones: the page is almost the full width. */
+@media (max-width: 599px) {
+  :root {
+    --page-w: calc(100vw - 1.5rem);
+    --page-h: calc(100svh - var(--tabs-h) - 1.9rem);
+    --dur-page: 520ms;
+    --book-perspective: 1700px;
+    --edge-step: 1px;
+    --board-over: 3px;
+    --page-pad-x: 1.15rem;
+  }
+}
+
+/* Short landscape screens (phones on their side): side tabs, and the page widens into the
+   spare desk instead of leaving a narrow slot with dark bands either side. */
+@media (orientation: landscape) and (max-height: 560px) {
+  :root {
+    --page-h: calc(100svh - 1.5rem);
+    /* the tabs read horizontally here (too short for vertical labels), so they reach further */
+    --tab-reach: 6.7rem;
+    --page-w: min(calc(100vw - var(--tab-reach) * 2 - 1rem), 52rem);
+    --page-pad-top: .7rem;
+    --dur-page: 560ms;
+    --book-perspective: 2400px;
+  }
+}

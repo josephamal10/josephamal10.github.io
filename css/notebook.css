@@ -1,0 +1,940 @@
+/* ==========================================================================
+   Notebook frame — open-book geometry, leaves, page turn, tabs, inner cover,
+   verso stack, page-block edges, and a BASIC closed state (SCENE refines it
+   in scene.css). Owned by FOUNDATION.
+
+   Hooks other owners may use:
+     .book[data-turned]        the reader is past page 1: the verso stack covers the inner cover
+     .book.book--spread        the open two-page spread is centred (translateX(--spread-shift))
+     .book.book--compact       too little room on the left: Close moves into the running head
+     .book.is-leaving          set when closing starts: the verso fades so the board can swing shut
+     .app.is-settling          (SCENE) lets the tabs show while data-state is still 'opening'
+   ========================================================================== */
+
+/* ---------------------------------------------------------------- stage */
+
+.app {
+  position: fixed;
+  inset: 0;
+  overflow: hidden;
+  overflow: clip;           /* not scrollable even by focus() or scrollIntoView */
+  background: var(--desk-1);
+}
+
+.desk {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  overflow: clip;
+  /* plain dark desk (SCENE replaces this with the lit surface) */
+  background:
+    radial-gradient(90% 75% at 44% 40%, var(--desk-2) 0%, var(--desk-1) 58%, var(--desk-0) 100%);
+}
+
+.desk__light,
+.desk__grain {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.camera {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding-top: var(--tabs-h);
+  transform-origin: 50% 50%;
+}
+
+.props {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.book {
+  position: relative;
+  width: var(--page-w);
+  height: var(--page-h);
+  isolation: isolate;
+  /* extents of the board around the page block */
+  --edge-max: calc(var(--edge-step) * 5);
+  --board-out: calc(var(--board-over) + var(--edge-max));
+}
+
+/* Open: when the whole spread fits, the notebook slides right so the spine sits in the middle
+   and the left-hand page is fully on the desk. The shift is an integer (set by notebook.js),
+   so text stays on the pixel grid. It eases in with the camera move and back out on closing. */
+.app[data-state="opening"] .book--spread,
+.app[data-state="open"] .book--spread {
+  transform: translateX(var(--spread-shift, 0px));
+}
+.app[data-state="opening"] .book--spread { transition: transform 1000ms var(--ease-camera) 100ms; }
+.app[data-state="closing"] .book--spread { transition: transform 850ms var(--ease-camera) 50ms; }
+
+/* Basic closed state: the camera sits back from the desk. */
+.app[data-state="closed"] .camera {
+  transform: translateX(-1.5%) scale(.74) rotate(-6deg);
+}
+@media (max-width: 599px) {
+  .app[data-state="closed"] .camera { transform: translateY(-3%) scale(.7) rotate(-6deg); }
+}
+.app[data-state="opening"] .book,
+.app[data-state="closing"] .book { pointer-events: none; }
+
+/* ---------------------------------------------------------------- page block + back board */
+
+.book__block {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.book__board {
+  position: absolute;
+  top: calc(var(--board-over) * -1);
+  left: 0;
+  right: calc(var(--board-out) * -1);
+  bottom: calc(var(--board-out) * -1);
+  border-radius: 0 calc(var(--radius-board) + var(--board-over)) calc(var(--radius-board) + var(--board-over)) 0;
+  background:
+    linear-gradient(118deg, rgba(255, 255, 255, .035), rgba(255, 255, 255, 0) 38%),
+    var(--cover-0);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, .05),
+    inset -1px 0 0 rgba(255, 255, 255, .03),
+    0 1px 2px rgba(0, 0, 0, .7),
+    0 3px 6px rgba(0, 0, 0, .55),
+    18px 30px 60px -12px rgba(0, 0, 0, .75),
+    40px 70px 120px -20px rgba(0, 0, 0, .55);
+}
+
+.book__edge,
+.verso__edge {
+  position: absolute;
+  inset: 0;
+  background: color-mix(in srgb, var(--paper-2), var(--paper-edge) calc(var(--n) * 18%));
+}
+.book__edge {
+  border-radius: 0 var(--radius-fore) var(--radius-fore) 0;
+  transform: translate(calc(var(--n) * var(--edge-step)), calc(var(--n) * var(--edge-step)));
+  box-shadow: .5px .5px 0 rgba(70, 52, 24, .22);
+}
+
+/* Ribbon marker: leaves the block at the foot and lies on the desk (closed and open). */
+.book__ribbon {
+  position: absolute;
+  left: 7%;
+  top: calc(100% - 1.5rem);
+  width: 7px;
+  height: calc(var(--board-out) + 3.1rem);
+  background: linear-gradient(90deg, #1d1210, #3a211c 45%, #2a1714 70%, #1b100e);
+  clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 88%, 0 100%);
+  filter: drop-shadow(1px 2px 1.5px rgba(0, 0, 0, .6));
+  transform: rotate(4deg);
+  transform-origin: 50% 0;
+}
+@media (max-width: 599px) {
+  .book__ribbon { left: 8%; width: 5px; height: calc(var(--board-out) + 1.25rem); top: calc(100% - .6rem); }
+}
+
+/* ---------------------------------------------------------------- inner cover (open cover, lying left) */
+
+.book__inner-cover {
+  position: absolute;
+  z-index: 1;
+  top: calc(var(--board-over) * -1);
+  bottom: calc(var(--board-out) * -1);
+  right: 100%;
+  width: calc(100% + var(--board-out));
+  border-radius: calc(var(--radius-board) + var(--board-over)) 0 0 calc(var(--radius-board) + var(--board-over));
+  visibility: hidden;
+}
+.app[data-state="open"] .book__inner-cover { visibility: visible; }
+
+.inner-cover__board {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background:
+    /* hinge: the board folds down into the spine */
+    linear-gradient(270deg, rgba(0, 0, 0, .62) 0, rgba(0, 0, 0, .22) 10px, rgba(255, 255, 255, .035) 13px, rgba(0, 0, 0, 0) 15px, rgba(0, 0, 0, 0) 40px),
+    /* soft key light from the upper left */
+    radial-gradient(120% 90% at 18% 8%, rgba(255, 255, 255, .045), rgba(255, 255, 255, 0) 60%),
+    linear-gradient(180deg, var(--cover-1), var(--cover-0));
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, .045),
+    0 1px 2px rgba(0, 0, 0, .7),
+    0 3px 6px rgba(0, 0, 0, .5),
+    -10px 30px 60px -12px rgba(0, 0, 0, .7);
+}
+/* soft-touch texture (baseFrequency .5: no aliasing when the camera scales the book) */
+.inner-cover__board::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  opacity: .34;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.5' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+.inner-cover__content {
+  --plate-w: min(16.5rem, calc(var(--left-space, 300px) - 4.25rem));
+  position: absolute;
+  top: 13%;
+  right: max(1.75rem, calc((min(var(--left-space, 300px), 100%) - var(--plate-w)) / 2 - .25rem));
+  width: var(--plate-w);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.6rem;
+}
+.book--spread .inner-cover__content { top: 15%; }
+.book--compact .inner-cover__content { display: none; }
+/* the bookplate is printed on the inside of the front board: only page 1 can show it */
+.book[data-turned] .inner-cover__content { visibility: hidden; }
+
+.inner-cover__plate {
+  position: relative;
+  width: 100%;
+  padding: 1.2rem 1.3rem 1.35rem;
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image:
+    radial-gradient(120% 90% at 20% 0%, rgba(255, 253, 247, .6), rgba(255, 253, 247, 0) 60%),
+    var(--paper-grain);
+  border-radius: 1.5px;
+  transform: rotate(-.7deg);
+  box-shadow:
+    0 .5px 0 rgba(255, 255, 255, .25) inset,
+    0 1px 1px rgba(0, 0, 0, .45),
+    0 12px 26px -10px rgba(0, 0, 0, .8);
+}
+.inner-cover__plate::before {
+  content: "";
+  position: absolute;
+  inset: .4rem;
+  border: 3px double rgba(60, 38, 16, .2);
+  pointer-events: none;
+}
+.inner-cover__lead {
+  font: italic 500 var(--fs-sm)/1.3 var(--font-serif);
+  color: var(--ink-3);
+  text-align: center;
+  text-wrap: balance;
+}
+.inner-cover__fill { margin-top: .35rem; }
+.inner-cover__fill p {
+  padding: .5rem .1rem .2rem;
+  border-bottom: 1px solid rgba(60, 38, 16, .2);
+  overflow-wrap: anywhere;
+}
+.inner-cover__name { font: 600 1.32rem/1.1 var(--font-display); letter-spacing: .01em; }
+.inner-cover__line { font: 500 var(--fs-sm)/1.3 var(--font-serif); color: var(--ink-2); }
+.inner-cover__line--mono { font: 400 var(--fs-xs)/1.3 var(--font-mono); letter-spacing: .02em; }
+.inner-cover__email { color: var(--ink-2); text-decoration: none; }
+.inner-cover__email:hover { color: var(--ink); text-decoration: underline; text-underline-offset: 3px; text-decoration-thickness: 1px; }
+
+/* the quiet Close control: on the dark board (page 1) and at the foot of the verso (later pages) */
+.inner-cover__close,
+.verso__close {
+  display: inline-flex;
+  align-items: center;
+  gap: .6rem;
+  padding: .55rem .5rem;
+  font: 500 var(--fs-label)/1 var(--font-sans);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  transition: opacity .2s ease, color .2s ease;
+}
+.inner-cover__close { color: var(--tab-ink); opacity: .7; }
+.inner-cover__close:hover { opacity: 1; }
+.inner-cover__close:focus-visible { opacity: 1; outline-color: var(--focus-dark); outline-offset: 3px; }
+.inner-cover__close-mark,
+.running-head__close-mark,
+.verso__close-mark {
+  position: relative;
+  width: .95rem;
+  height: 1px;
+  background: currentColor;
+}
+.inner-cover__close-mark::before,
+.running-head__close-mark::before,
+.verso__close-mark::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: -5px;
+  width: 6px;
+  height: 6px;
+  border-left: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: rotate(45deg);
+  transform-origin: 1px 6px;
+}
+
+/* ---------------------------------------------------------------- verso stack (left-hand page) */
+
+/* Once the reader is past page 1, the backs of the turned pages lie on the inner cover.
+   It sits exactly where a turned sheet lands, and looks exactly like a sheet's back
+   (.leaf__back), so a turn ends on it with no change. */
+.book__verso {
+  position: absolute;
+  z-index: 2;
+  top: var(--board-over);
+  right: 0;
+  bottom: var(--board-out);
+  left: var(--board-out);
+  visibility: hidden;
+  transition: opacity .2s ease-in;
+}
+.app[data-state="open"] .book[data-turned] .book__verso { visibility: visible; }
+.book.is-leaving .book__verso { opacity: 0; }
+
+.verso__edges { position: absolute; inset: 0; }
+.verso__edge {
+  border-radius: var(--radius-fore) 0 0 var(--radius-fore);
+  transform: translate(calc(var(--n) * var(--edge-step) * -1), calc(var(--n) * var(--edge-step)));
+  box-shadow: -.5px .5px 0 rgba(70, 52, 24, .22);
+}
+.verso__sheet {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: var(--radius-fore) 0 0 var(--radius-fore);
+  box-shadow: 0 0 0 .5px rgba(70, 52, 24, .2);
+}
+
+.verso__close {
+  position: absolute;
+  bottom: calc(var(--page-pad-top) * .6);
+  /* centred in the part of the verso that is on screen */
+  right: calc(min(100%, var(--left-space, 100%)) / 2);
+  transform: translateX(50%);
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.verso__close:hover { color: var(--ink); }
+.book--compact .verso__close { display: none; }
+
+/* ---------------------------------------------------------------- leaves */
+
+.book__leaves {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  perspective: var(--book-perspective);
+  perspective-origin: 50% 50%;
+  outline: none;
+}
+
+.leaf {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 50%;
+  transform-style: preserve-3d;
+}
+/* Hidden pages are never display:none: content-visibility:hidden skips them entirely but keeps
+   their layout, so a page seen once (or primed while idle) shows again without being relaid.
+   The pages either side of the current one (and the section openers the tabs jump to, primed
+   once while idle) are kept fully laid out, so a turn never lays out a cold page as it starts. */
+.book__leaves > .leaf:not(.leaf--riffle)[hidden] {
+  display: block !important;
+  visibility: hidden;
+  content-visibility: hidden;
+}
+.book__leaves > .leaf.leaf--warm[hidden],
+.book__leaves > .leaf.leaf--prime[hidden] { content-visibility: visible; }
+
+.leaf__front,
+.leaf__back {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  overflow: clip;           /* a page face must never be scrolled sideways by focus() */
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.leaf__front {
+  display: flex;
+  flex-direction: column;
+  border-radius: 0 var(--radius-fore) var(--radius-fore) 0;
+  box-shadow: 0 0 0 .5px rgba(70, 52, 24, .2), 1px 1px 2px rgba(40, 28, 10, .12);
+}
+
+.leaf__back {
+  transform: rotateY(180deg);
+  border-radius: var(--radius-fore) 0 0 var(--radius-fore);
+  box-shadow: 0 0 0 .5px rgba(70, 52, 24, .2);
+}
+
+/* gutter: the page curves down into the binding */
+.leaf__front::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 10%;
+  z-index: 3;
+  pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(52, 38, 16, .26) 0, rgba(52, 38, 16, .1) 18%, rgba(52, 38, 16, .035) 45%, rgba(52, 38, 16, 0) 100%);
+}
+/* fore-edge: a hair of shade where the sheet ends */
+.leaf__front::after {
+  content: "";
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 2.5%;
+  z-index: 3;
+  pointer-events: none;
+  background: linear-gradient(270deg, rgba(52, 38, 16, .07), rgba(52, 38, 16, 0));
+}
+/* the back of a sheet (turning, or resting on the verso stack): gutter on its right */
+.leaf__back::before,
+.verso__sheet::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 0 auto;
+  width: 10%;
+  pointer-events: none;
+  background: linear-gradient(270deg, rgba(52, 38, 16, .24) 0, rgba(52, 38, 16, .09) 20%, rgba(52, 38, 16, .03) 48%, rgba(52, 38, 16, 0) 100%);
+}
+
+/* running head — Plex Sans, small tracked caps */
+.running-head {
+  flex: none;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: baseline;
+  gap: .9rem;
+  margin: 0 var(--page-pad-x) 0 calc(var(--page-pad-x) + .35rem);
+  padding: var(--page-pad-top) 0 .7rem;
+  border-bottom: 1px solid var(--rule);
+  font: 500 max(10px, .66rem)/1 var(--font-sans);
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.running-head__left { flex: 0 1 auto; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.running-head__right {
+  flex: 0 1 auto;
+  min-width: 0;
+  margin-left: auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  font-variant-numeric: tabular-nums;
+}
+.running-head__close {
+  display: none;
+  flex: none;
+  align-items: center;
+  gap: .45rem;
+  margin: -.5rem 0 -.5rem -.35rem;
+  padding: .5rem .35rem;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: var(--ink-2);
+}
+.running-head__close:hover { color: var(--ink); }
+.book--compact .running-head__close { display: inline-flex; }
+.book--compact .running-head__left { display: none; }
+@media (max-width: 359.98px) {
+  .running-head__sub { display: none; }
+}
+
+/* content */
+.leaf__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  position: relative;
+  z-index: 1;
+  overflow-x: hidden;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1.35rem var(--page-pad-x) 1rem calc(var(--page-pad-x) + .35rem);
+  scrollbar-width: thin;
+  scrollbar-color: rgba(60, 38, 16, .26) transparent;
+  background-attachment: local;
+}
+.leaf__body::-webkit-scrollbar { width: 6px; }
+.leaf__body::-webkit-scrollbar-thumb { background: rgba(60, 38, 16, .22); border-radius: 3px; }
+.leaf__body::-webkit-scrollbar-track { background: transparent; }
+
+.leaf__foot {
+  flex: none;
+  position: relative;
+  z-index: 1;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: .6rem;
+  padding: .35rem var(--page-pad-x) calc(var(--page-pad-top) * .85);
+}
+/* 'more below': this page scrolls (it does not continue on another page) */
+.leaf__more {
+  margin-right: auto;
+  font: 500 max(10px, .64rem)/1 var(--font-sans);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  opacity: 0;
+  transition: opacity .25s ease;
+}
+.leaf__more::after {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  margin-left: .55rem;
+  border-right: 1px solid currentColor;
+  border-bottom: 1px solid currentColor;
+  transform: translateY(-3px) rotate(45deg);
+}
+.leaf__front[data-more] .leaf__more,
+.leaf__back[data-more] .leaf__more { opacity: 1; }
+.leaf__front[data-more] .leaf__body,
+.leaf__back[data-more] .leaf__body {
+  -webkit-mask-image: linear-gradient(180deg, #000 calc(100% - 2.2rem), rgba(0, 0, 0, .15));
+  mask-image: linear-gradient(180deg, #000 calc(100% - 2.2rem), rgba(0, 0, 0, .15));
+}
+.folio {
+  font: 500 var(--fs-xs)/1 var(--font-mono);
+  letter-spacing: .08em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+}
+.folio::before {
+  content: "";
+  display: inline-block;
+  width: 1.1rem;
+  height: 1px;
+  margin-right: .55rem;
+  vertical-align: middle;
+  background: var(--ink-4);
+  opacity: .7;
+}
+
+/* page-turn shading (animated by notebook.js) */
+.leaf__shade {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  pointer-events: none;
+  opacity: 0;
+}
+.leaf__front > .leaf__shade {
+  background: linear-gradient(90deg, rgba(26, 18, 8, .05) 0%, rgba(26, 18, 8, .2) 55%, rgba(26, 18, 8, .34) 100%);
+}
+.leaf__back > .leaf__shade {
+  background: linear-gradient(270deg, rgba(26, 18, 8, .08) 0%, rgba(26, 18, 8, .24) 60%, rgba(26, 18, 8, .36) 100%);
+}
+
+/* cast shadow on the sheet below a lifted sheet */
+.turn-cast {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  pointer-events: none;
+  opacity: 0;
+  background: rgba(30, 22, 10, .1);
+}
+.turn-cast__band {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 50%;
+  background: linear-gradient(90deg, rgba(30, 22, 10, .4) 0%, rgba(30, 22, 10, .16) 40%, rgba(30, 22, 10, 0) 100%);
+}
+
+/* blank sheets flipped during a multi-page jump */
+.leaf__ghost {
+  position: absolute;
+  top: calc(var(--page-pad-top) + 1.4rem);
+  left: calc(var(--page-pad-x) + .35rem);
+  right: var(--page-pad-x);
+  bottom: 12%;
+  border-top: 1px solid var(--rule);
+}
+
+/* ---------------------------------------------------------------- index tabs */
+
+/* Die-cut pressboard index tabs. Each tab is cut with angled shoulders from graphite
+   pressboard (matte, fibrous); the active one is the paper of the current page. The shadow
+   belongs to the whole strip (drop-shadow follows the cut shapes). */
+.book__tabs {
+  position: absolute;
+  z-index: 2;
+  display: flex;
+  transition: opacity .25s ease;
+  filter: drop-shadow(.5px .5px 0 rgba(0, 0, 0, .55)) drop-shadow(2px 3px 3px rgba(0, 0, 0, .5));
+}
+.app:not([data-state="open"]):not(.is-settling) .book__tabs { visibility: hidden; opacity: 0; }
+
+.book__tab {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--tab-ink);
+  background-color: color-mix(in srgb, var(--tab-0), #fff calc(var(--tab-v, 0) * 1%));
+  background-image:
+    linear-gradient(var(--tab-sheen-dir, 90deg), rgba(0, 0, 0, .28) 0, rgba(0, 0, 0, 0) 16px, rgba(255, 255, 255, .025) 60%, rgba(255, 255, 255, .05)),
+    var(--paper-grain);
+  background-size: 100% 100%, 240px 240px;
+  background-blend-mode: normal, soft-light;
+  transition: transform .22s cubic-bezier(.3, .7, .3, 1), background-color .2s ease, color .2s ease;
+}
+.book__tab-label {
+  position: relative;
+  font: 500 max(11px, .66rem)/1 var(--font-sans);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.book__tab:hover { background-color: color-mix(in srgb, var(--tab-1), #fff calc(var(--tab-v, 0) * 1%)); }
+/* Focus ring drawn inside the cut shape (an outline would be clipped at the angled
+   shoulders), in the colour of the tab's own surface. --tab-ring sets where it sits. */
+.book__tab:focus-visible { outline: none; }
+.book__tab:focus-visible::after {
+  content: "";
+  position: absolute;
+  inset: var(--tab-ring, 5px);
+  border: 2px solid var(--focus-dark);
+  border-radius: 2px;
+  pointer-events: none;
+}
+.book__tab.is-active:focus-visible::after { border-color: var(--focus-paper); }
+.book__tab.is-active {
+  color: var(--ink);
+  background-color: var(--paper);
+  background-image:
+    linear-gradient(var(--tab-sheen-dir, 90deg), rgba(52, 38, 16, .06), rgba(52, 38, 16, 0) 40%),
+    var(--paper-grain);
+  background-blend-mode: normal, normal;
+}
+
+/* fore-edge tabs: landscape with room, and short landscape screens */
+@media (orientation: landscape) and (min-width: 900px), (orientation: landscape) and (max-height: 560px) {
+  .book__tabs {
+    top: 6%;
+    bottom: 6%;
+    left: 100%;
+    margin-left: -12px;
+    width: calc(var(--tab-reach) + 12px);
+    flex-direction: column;
+    gap: 6px;
+  }
+  /* each tab is cut to its label (Achievements is longer than About), the spare edge shared out */
+  .book__tab {
+    flex: 1 1 auto;
+    min-height: 0;
+    max-height: 8.6rem;
+    padding: 8px 0 8px 12px;
+    --tab-ring: 11px 7px 11px 16px;
+    clip-path: polygon(0 0, calc(100% - 4px) 5px, 100% 13px, 100% calc(100% - 13px), calc(100% - 4px) calc(100% - 5px), 0 100%);
+  }
+  .book__tab-label { writing-mode: vertical-rl; font-size: clamp(9px, calc(var(--page-h) * .0134), 11px); letter-spacing: .1em; }
+  .book__tab:hover { transform: translateX(2px); }
+  .book__tab.is-active { transform: none; }
+}
+/* phones on their side: the edge is too short for vertical labels, so the tabs reach further
+   out and read horizontally, like the printed labels on thumb-index dividers */
+@media (orientation: landscape) and (max-height: 560px) {
+  .book__tabs { top: 4%; bottom: 4%; gap: 4px; }
+  .book__tab {
+    flex: 1 1 0;
+    justify-content: flex-start;
+    padding: 0 0 0 calc(12px + .55rem);
+    --tab-ring: 5px 7px 5px 16px;
+    clip-path: polygon(0 0, calc(100% - 5px) 0, 100% 6px, 100% calc(100% - 6px), calc(100% - 5px) 100%, 0 100%);
+  }
+  .book__tab-label { writing-mode: horizontal-tb; font-size: 10px; letter-spacing: .08em; }
+}
+
+/* top-edge tabs: narrow or portrait */
+@media (orientation: portrait), (max-width: 899.98px) and (min-height: 560.02px) {
+  .book__tabs {
+    --tab-sheen-dir: 180deg;
+    left: 0;
+    right: 0;
+    bottom: calc(100% - 6px);
+    height: calc(var(--tabs-h) + 10px);
+    gap: 4px;
+    /* room above and below the tabs so a focused tab is never clipped by the strip */
+    padding: 4px var(--radius-fore) 0 .75rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+  .book__tabs::-webkit-scrollbar { display: none; }
+  .book__tabs.can-scroll-right { -webkit-mask-image: linear-gradient(90deg, #000 calc(100% - 2.5rem), transparent); mask-image: linear-gradient(90deg, #000 calc(100% - 2.5rem), transparent); }
+  .book__tabs.can-scroll-left { -webkit-mask-image: linear-gradient(90deg, transparent, #000 2.5rem); mask-image: linear-gradient(90deg, transparent, #000 2.5rem); }
+  .book__tabs.can-scroll-left.can-scroll-right { -webkit-mask-image: linear-gradient(90deg, transparent, #000 2.5rem, #000 calc(100% - 2.5rem), transparent); mask-image: linear-gradient(90deg, transparent, #000 2.5rem, #000 calc(100% - 2.5rem), transparent); }
+  .book__tab {
+    flex: none;
+    padding: 2px 1.05rem 6px;
+    --tab-ring: 5px 10px 9px;
+    clip-path: polygon(0 100%, 5px 4px, 12px 0, calc(100% - 12px) 0, calc(100% - 5px) 4px, 100% 100%);
+  }
+  .book__tab:hover { transform: translateY(-1px); }
+  .book__tab.is-active { transform: none; }
+}
+
+/* ---------------------------------------------------------------- cover (basic; SCENE styles it fully) */
+
+.cover {
+  position: absolute;
+  inset: 0;
+  z-index: 6;
+  display: block;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  text-align: center;
+  border-radius: 3px var(--radius-board) var(--radius-board) 3px;
+  background: var(--cover-1);
+  transform-origin: 0 50%;
+  transform-style: preserve-3d;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.cover__front,
+.cover__back {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+.cover__front {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1.1rem;
+  padding: 0 8% 27%;
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, .35), rgba(0, 0, 0, 0) 3.5%),
+    linear-gradient(128deg, rgba(255, 255, 255, .06), rgba(255, 255, 255, 0) 45%),
+    var(--cover-1);
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, .06);
+}
+.cover__back {
+  transform: rotateY(180deg);
+  border-radius: var(--radius-board) 3px 3px var(--radius-board);
+  background: var(--cover-0);
+}
+.cover__quote {
+  font: italic 500 var(--fs-lg)/1.3 var(--font-display);
+  letter-spacing: .06em;
+  color: #262626;
+  text-shadow: 0 1px 0 var(--emboss-hi), 0 -1px 0 var(--emboss-lo);
+}
+.cover__rule {
+  width: 2.6rem;
+  height: 1px;
+  background: #242424;
+  box-shadow: 0 1px 0 var(--emboss-hi), 0 -1px 0 var(--emboss-lo);
+}
+.cover__name {
+  font: 600 var(--fs-xl)/1 var(--font-display);
+  letter-spacing: .34em;
+  margin-right: -.34em;
+  text-transform: uppercase;
+  color: #292929;
+  text-shadow: 0 1px 0 var(--emboss-hi), 0 -1px 0 var(--emboss-lo);
+}
+.cover:focus-visible { outline: 2px solid var(--focus-dark); outline-offset: 6px; }
+
+.app[data-state="open"] .cover {
+  visibility: hidden;
+  pointer-events: none;
+  transform: rotateY(-178deg);
+}
+
+/* ---------------------------------------------------------------- phones */
+
+@media (max-width: 599px) {
+  .running-head { margin-left: calc(var(--page-pad-x) + .15rem); padding-bottom: .6rem; }
+  .leaf__body { padding: 1.05rem var(--page-pad-x) .9rem calc(var(--page-pad-x) + .15rem); }
+  .leaf__front::before { width: 6%; }
+}
+
+/* phones on their side: every pixel of height goes to the writing */
+@media (orientation: landscape) and (max-height: 560px) {
+  .running-head { padding-bottom: .45rem; gap: .7rem; }
+  .leaf__body { padding-top: .8rem; padding-bottom: .5rem; }
+  .leaf__foot { padding-top: .15rem; padding-bottom: calc(var(--page-pad-top) * .7); }
+  .leaf__front::before { width: 6%; }
+}
+
+/* ---------------------------------------------------------------- forced colours (Windows High Contrast) */
+
+@media (forced-colors: active) {
+  .cover__front,
+  .cover__back { background: Canvas; border: 1px solid CanvasText; }
+  .cover__quote,
+  .cover__name { color: CanvasText; text-shadow: none; }
+  .cover__rule { background: CanvasText; box-shadow: none; }
+  .app[data-state="closed"] .book__leaves { visibility: hidden; }
+  .leaf__front,
+  .leaf__back,
+  .verso__sheet { border: 1px solid CanvasText; }
+  .book__tabs { filter: none; }
+  .book__tab { clip-path: none; border: 1px solid ButtonText; background: ButtonFace; color: ButtonText; }
+  .book__tab.is-active { border: 2px solid Highlight; color: Highlight; }
+  .book__tab:focus-visible::after { border-color: Highlight; }
+  .inner-cover__plate { border: 1px solid CanvasText; }
+  .book__ribbon { display: none; }
+  .leaf__front[data-more] .leaf__body,
+  .leaf__back[data-more] .leaf__body { -webkit-mask-image: none; mask-image: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .book__tab, .book__tabs, .inner-cover__close, .verso__close, .leaf__more, .book__verso { transition: none; }
+  .book__tab:hover { transform: none; }
+  .app[data-state] .book--spread { transition: none; }
+}
+
+/* ---------------------------------------------------------------- spreads: the left-hand page
+
+   The left page of a spread is printed on the back of the sheet before it; that sheet lies
+   turned on the left while the spread is open (see core/notebook.js). */
+.leaf--left { transform: rotateY(-180deg); }
+
+.leaf__back--page { display: flex; flex-direction: column; }
+.leaf__back--page > .running-head {
+  margin: 0 calc(var(--page-pad-x) + .35rem) 0 var(--page-pad-x);
+}
+.leaf__body--verso {
+  padding: 1.35rem calc(var(--page-pad-x) + .35rem) 1rem var(--page-pad-x);
+}
+.leaf__foot--verso {
+  justify-content: flex-start;
+  gap: 1.2rem;
+}
+.leaf__back--page > .leaf__foot--verso { padding: .35rem calc(var(--page-pad-x) + .35rem) calc(var(--page-pad-top) * .85) var(--page-pad-x); }
+.leaf__back--page .leaf__more { margin: 0 0 0 auto; }
+.folio--verso::before { display: none; }
+.folio--verso::after {
+  content: "";
+  display: inline-block;
+  width: 1.1rem;
+  height: 1px;
+  margin-left: .55rem;
+  vertical-align: middle;
+  background: var(--ink-4);
+  opacity: .7;
+}
+/* the quiet Close control sits at the foot of every left page (not on phones: it is in the running head there) */
+.leaf__back .verso__close { position: static; transform: none; }
+.leaf__back:not(.leaf__back--page) { display: flex; flex-direction: column; justify-content: flex-end; align-items: center; }
+.leaf__back:not(.leaf__back--page) > .leaf__foot--verso { justify-content: center; padding-bottom: calc(var(--page-pad-top) * .6); }
+
+/* closing: the left page fades first, so the board beneath it can swing shut on its own */
+.book.is-leaving .leaf--left > .leaf__back { opacity: 0; transition: opacity .2s ease-in; }
+.app[data-state="closing"] .leaf--left { visibility: hidden; }
+
+/* one page at a time (phones, narrow windows): the left page's content heads the right page,
+   and the backs of the sheets are plain paper */
+.leaf__facing-inline {
+  margin-bottom: 1.6rem;
+  padding-bottom: 1.4rem;
+  border-bottom: 1px solid var(--rule);
+}
+.book--spread .leaf__facing-inline { display: none; }
+.leaf__facing-inline--end { margin: 1.6rem 0 0; padding: 1.4rem 0 0; border-bottom: 0; border-top: 1px solid var(--rule); }
+.book:not(.book--spread) .leaf__back--page > .running-head,
+.book:not(.book--spread) .leaf__back--page > .leaf__body { visibility: hidden; }
+@media (prefers-reduced-motion: reduce) {
+  .book.is-leaving .leaf--left > .leaf__back { transition: none; }
+}
+
+/* the inside of the front board carries the bookplate and the business card (js/pages/about.js) */
+.inner-cover__content { --plate-w: min(19.5rem, calc(var(--left-space, 300px) - 4.25rem)); top: 11%; }
+.book--spread .inner-cover__content { top: 11%; }
+
+/* ---------------------------------------------------------------- previous / next page buttons
+
+   At the foot of every page: "← Previous page" on the left page, "Next page →" on the right
+   (on the last page it closes the notebook). With one page on screen, the right page carries
+   both. */
+.page-turn {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  padding: .5rem .8rem .46rem;
+  border: 1px solid rgba(60, 38, 16, .32);
+  border-radius: 2px;
+  background: rgba(255, 246, 226, .3);
+  font: 500 var(--fs-label)/1 var(--font-sans);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--ink-2);
+  white-space: nowrap;
+  transition: color .15s ease, background-color .15s ease, border-color .15s ease;
+}
+.page-turn:hover { color: var(--ink); border-color: rgba(60, 38, 16, .55); background: rgba(255, 246, 226, .6); }
+.page-turn:focus-visible { outline: 2px solid var(--focus-paper); outline-offset: 2px; }
+.page-turn__mark { font: 400 var(--fs-md)/1 var(--font-serif); letter-spacing: 0; }
+.page-turn--prev .page-turn__mark { transition: transform .15s ease; }
+.page-turn--prev:hover .page-turn__mark { transform: translateX(-2px); }
+.page-turn--next:hover .page-turn__mark { transform: translateX(2px); }
+.page-turn--next .page-turn__mark { transition: transform .15s ease; }
+.page-turn-mark { display: none; }
+/* the right page: Next sits just before the folio; Previous only when one page is on screen */
+.leaf__foot > .page-turn--single { margin-right: auto; }
+.leaf__foot > .page-turn--single + .page-turn--next { margin-left: 0; }
+.book--spread .leaf__foot > .page-turn--single { display: none; }
+.book:not(.book--spread) .leaf__front .leaf__more { position: absolute; left: 50%; top: -.35rem; transform: translateX(-50%); }
+.leaf__back:not(.leaf__back--page) > .leaf__foot--verso .page-turn { margin-bottom: 0; }
+@media (prefers-reduced-motion: reduce) { .page-turn, .page-turn__mark { transition: none; } }
+@media (forced-colors: active) { .page-turn { border-color: ButtonText; } }
+
+/* ---------------------------------------------------------------- pages that fit (js/ui/fit.js)
+
+   Two pages side by side: the writing is scaled to fill its page, and no page scrolls.
+   One page at a time: a page is set in screen-sized columns and turned through one screen
+   at a time. Only the question page (.ask) still scrolls. */
+.leaf__body.is-fit,
+.leaf__body.is-paged { overflow: hidden; overflow: clip; }
+.fit-gap { flex: none; margin: 0 !important; padding: 0 !important; }
+.fit-pages {
+  column-fill: auto;
+  transition: transform .38s cubic-bezier(.3, .7, .3, 1);
+  will-change: transform;
+}
+.fit-pages figure,
+.fit-pages table,
+.fit-pages .pj-table-wrap,
+.fit-pages .pj-stats,
+.fit-pages .pj-stat,
+.fit-pages .page-header,
+.fit-pages .bcard,
+.fit-pages .pj-end,
+.fit-pages .cert,
+.fit-pages .xp-day,
+.fit-pages .xr-item,
+.fit-pages .edu-entry,
+.fit-pages li { break-inside: avoid; }
+.fit-pages h2, .fit-pages h3 { break-after: avoid; }
+.leaf__screens {
+  position: absolute;
+  left: 50%;
+  top: -.55rem;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  font: 500 var(--fs-xs)/1 var(--font-mono);
+  letter-spacing: .08em;
+  font-variant-numeric: tabular-nums;
+  color: var(--ink-3);
+}
+@media (prefers-reduced-motion: reduce) { .fit-pages { transition: none; } }

@@ -1,0 +1,53 @@
+/* ==========================================================================
+   "Close the notebook", lettered in gold on the desk (js/ui/closer.js).
+   Tooled like the cover's title, reading upwards like a spine, to the left
+   of the open book.
+   ========================================================================== */
+
+.desk-closer {
+  position: absolute;
+  z-index: 4;
+  top: 50%;
+  right: calc(100% + var(--page-w) + var(--board-out, 12px) + 1.6rem);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: .55rem;
+  padding: .4rem .5rem;
+  color: #d6b064;
+  font: 600 .82rem/1 var(--font-display);
+  letter-spacing: .32em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, .85), 0 0 10px rgba(0, 0, 0, .7);
+  cursor: pointer;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+  transform: translateY(-50%);
+  transition: color .2s ease, text-shadow .2s ease;
+}
+.app[data-state="open"] .book--room-left .desk-closer { display: flex; }
+
+/* a fading gold rule above and below */
+.desk-closer::before,
+.desk-closer::after {
+  content: "";
+  width: 1px;
+  height: 2.2rem;
+  background: linear-gradient(180deg, rgba(214, 176, 100, 0), rgba(214, 176, 100, .75), rgba(214, 176, 100, 0));
+}
+.desk-closer__words {
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);          /* reads upwards, like a spine on the left */
+  white-space: nowrap;
+}
+.desk-closer__orn { font-size: .55rem; line-height: 1; }
+
+.desk-closer:hover,
+.desk-closer:focus-visible {
+  color: #f4d68e;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, .85), 0 0 14px rgba(244, 214, 142, .35);
+}
+.desk-closer:focus-visible { outline: 2px solid #d6b064; outline-offset: 4px; }
+
+@media (prefers-reduced-motion: reduce) { .desk-closer { transition: none; } }
+@media (forced-colors: active) { .desk-closer { color: LinkText; } }

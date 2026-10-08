@@ -1,0 +1,113 @@
+/* ==========================================================================
+   Notes & writing — a contents page on ruled paper (grid:'rule').
+   Owned by PAGES-D. Every line of the contents is exactly one ruling tall,
+   so the writing sits on the printed lines (notes.js aligns the first one).
+   ========================================================================== */
+
+.notes {
+  --notes-line: 28px;            /* the ruling printed by paper.css */
+  --notes-date: 7.4rem;
+  --notes-gap: 1.1rem;
+  --notes-col-line: rgba(60, 38, 16, .13);
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.notes .page-header { margin-bottom: .55rem; }
+.notes .page-header__title { max-width: 18ch; }
+
+.notes__probe {
+  display: inline-block;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+  vertical-align: baseline;
+}
+
+/* the contents block runs to the foot of the page, with a printed column rule */
+.notes__contents {
+  position: relative;
+  flex: 1 1 auto;
+  line-height: var(--notes-line);
+}
+.notes__contents::before {
+  content: "";
+  position: absolute;
+  top: calc(var(--notes-pad, 0px) - 1px);   /* starts on the ruled line above the column heads */
+  bottom: 0;
+  left: calc(var(--notes-date) + var(--notes-gap) / 2);
+  width: 1px;
+  background: var(--notes-col-line);
+  pointer-events: none;
+}
+.notes__contents p,
+.notes__contents h3,
+.notes__contents li { margin: 0; line-height: var(--notes-line); max-width: none; }
+
+.notes__heads,
+.note {
+  display: grid;
+  grid-template-columns: var(--notes-date) minmax(0, 1fr);
+  column-gap: var(--notes-gap);
+}
+.notes__head {
+  font: 500 var(--fs-xs)/var(--notes-line) var(--font-mono);
+  letter-spacing: .16em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+  white-space: nowrap;
+}
+.notes__head:not(.notes__head--date) { padding-left: .15rem; }
+
+/* empty state: one quiet line, in the title column */
+.notes__contents .notes__empty {
+  margin-left: calc(var(--notes-date) + var(--notes-gap));
+  padding-left: .15rem;
+  font: italic 500 var(--fs-md)/var(--notes-line) var(--font-serif);
+  color: var(--ink-3);
+}
+
+/* entries */
+.notes__list { list-style: none; margin: 0; padding: 0; }
+.notes__list > .note + .note { margin-top: var(--notes-line); }
+.note__date {
+  font: 400 var(--fs-xs)/var(--notes-line) var(--font-mono);
+  letter-spacing: .04em;
+  color: var(--ink-3);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.note__main { min-width: 0; padding-left: .15rem; }
+.note__title {
+  font: 600 var(--fs-md)/var(--notes-line) var(--font-serif);
+  letter-spacing: -.004em;
+  color: var(--ink);
+  text-transform: none;
+  text-wrap: pretty;
+}
+/* the link underline falls exactly on the printed rule (a baseline sits 3px above it) */
+.note__link { text-decoration-color: rgba(60, 38, 16, .34); text-underline-offset: 3px; }
+.note__link:hover { text-decoration-color: currentColor; }
+.notes__contents .note__summary {
+  font: 500 var(--fs-sm)/var(--notes-line) var(--font-serif);
+  color: var(--ink-2);
+  max-width: 62ch;
+}
+.note__tags {
+  font: 400 var(--fs-xs)/var(--notes-line) var(--font-mono);
+  letter-spacing: .04em;
+  color: var(--ink-3);
+}
+.notes__contents .notes__turn {
+  margin-top: var(--notes-line);
+  text-align: right;
+  font: 400 var(--fs-xs)/var(--notes-line) var(--font-mono);
+  letter-spacing: .06em;
+  color: var(--ink-3);
+}
+.notes__turn .page-ref { font-size: 1em; }
+
+@media (max-width: 599px) {
+  .notes { --notes-date: 5.6rem; --notes-gap: .8rem; }
+  .notes__head { letter-spacing: .13em; }
+}

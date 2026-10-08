@@ -1,0 +1,168 @@
+/* ==========================================================================
+   Skills — a technical index, set like the index pages at the back of a
+   reference book. Owned by PAGES-C. Everything is scoped under .sk.
+   ========================================================================== */
+
+.sk {
+  --lh: 1.5rem;
+  --col-gap: 1.9rem;
+  --hang: .7rem;
+  --rule-strong: rgba(60, 38, 16, .28);
+  --rule-soft: rgba(60, 38, 16, .13);
+  --leader: rgba(60, 38, 16, .44);
+  container-type: inline-size;
+}
+
+.sk .page-header { margin-bottom: 1.15rem; }
+
+/* block heads: small mono caps followed by a hairline, like index section heads */
+.sk-label {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  margin: 0 0 .5rem;
+  font: 500 .68rem/1.2 var(--font-mono);
+  letter-spacing: .17em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.sk-label::after {
+  content: "";
+  flex: 1 1 auto;
+  height: 1px;
+  background: var(--rule-soft);
+}
+
+/* ---------------------------------------------------------------- the index columns */
+
+.sk-index {
+  padding-top: 1.05rem;
+  border-top: 3px double var(--rule-strong);
+}
+.sk-index--two {
+  display: grid;
+  /* the right column carries the longer tool and technology names */
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.24fr);
+  column-gap: var(--col-gap);
+}
+.sk-index--two > .sk-col + .sk-col {
+  position: relative;
+}
+.sk-index--two > .sk-col + .sk-col::before {
+  content: "";
+  position: absolute;
+  top: .1rem;
+  bottom: 1.15rem;
+  left: calc(var(--col-gap) / -2);
+  width: 1px;
+  background: var(--rule-soft);
+}
+.sk-group { padding-bottom: 1.15rem; }
+
+.sk-list { margin: 0; padding: 0; list-style: none; }
+.sk-list > li + li { margin-top: 0; }
+
+.sk-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: .55rem;
+  align-items: baseline;
+  align-items: last baseline;
+  font-size: var(--fs-md);
+  line-height: var(--lh);
+  color: var(--ink);
+}
+.sk-term {
+  min-width: 0;
+  overflow: hidden;
+  /* a wrapped entry hangs under its first word, as in a printed index */
+  padding-left: var(--hang);
+  text-indent: calc(var(--hang) * -1);
+  overflow-wrap: break-word;
+}
+/* Dot leader from the end of the term's last line to its page number. It adds no
+   width to the line (negative margin) so it never forces a wrap, and the term
+   clips it at the column edge. skills.js phases the dots from that edge so they
+   line up from row to row, as leaders do in a set index. */
+.sk-lead { display: none; }
+.sk-item.has-ref .sk-lead {
+  display: inline-block;
+  width: 40rem;
+  height: 2px;
+  margin: 0 -40rem 0 .45rem;
+  vertical-align: .14em;
+  text-indent: 0;
+  background-image: radial-gradient(circle at 1px 1px, var(--leader) 0 .7px, rgba(60, 38, 16, 0) 1.05px);
+  background-size: 6px 2px;
+  background-repeat: repeat-x;
+}
+
+.sk-ref {
+  font: 500 var(--fs-xs)/1 var(--font-mono);
+  letter-spacing: .02em;
+  color: var(--ink);
+  white-space: nowrap;
+  text-decoration: underline solid rgba(60, 38, 16, .26);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+.sk-ref:hover { color: var(--pen); text-decoration-color: currentColor; }
+.sk-ref__text { color: var(--ink-2); }
+.sk-ref:hover .sk-ref__text { color: inherit; }
+.sk-ref:focus-visible { outline: 2px solid var(--focus-paper); outline-offset: 2px; }
+
+/* a long index (see DENSE_AT in skills.js): smaller type, tighter rows */
+.sk--dense { --lh: 1.22rem; }
+.sk--dense .page-header { margin-bottom: .7rem; }
+.sk--dense .sk-index { padding-top: .75rem; }
+.sk--dense .sk-group { padding-bottom: .65rem; }
+.sk--dense .sk-label { margin-bottom: .3rem; }
+.sk--dense .sk-item { font-size: var(--fs-sm); }
+
+/* ---------------------------------------------------------------- studied + soft */
+
+.sk-block {
+  margin-top: .35rem;
+  padding-top: 1.05rem;
+  border-top: 1px solid var(--rule-strong);
+}
+.sk-block + .sk-block { margin-top: 1.25rem; border-top-color: var(--rule-soft); }
+
+.sk-list--study { margin-top: .1rem; }
+.sk-list--study > .sk-study + .sk-study { margin-top: .75rem; }
+.sk-item--study .sk-term { font-weight: 600; letter-spacing: -.003em; }
+.sk-source {
+  max-width: 58ch;
+  margin: .05rem 0 0;
+  padding-left: var(--hang);
+  font: italic 500 var(--fs-sm)/1.5 var(--font-serif);
+  color: var(--ink-2);
+}
+
+.sk-soft__list {
+  display: flex;
+  flex-wrap: wrap;
+  margin: .15rem 0 0;
+  padding: 0;
+  list-style: none;
+  font: 500 var(--fs-sm)/1.75 var(--font-serif);
+  color: var(--ink-2);
+}
+.sk-soft__list > li { margin: 0; white-space: nowrap; }
+/* the separator travels with the item before it, so a line never starts with one */
+.sk-soft__list > li:not(:last-child)::after {
+  content: "\00b7";
+  content: "\00b7" / "";
+  display: inline-block;
+  margin: 0 .62em;
+  color: var(--ink-3);
+}
+
+/* ---------------------------------------------------------------- narrow pages */
+
+@container (max-width: 25rem) {
+  .sk-index--two { grid-template-columns: minmax(0, 1fr); }
+  .sk-index--two > .sk-col + .sk-col::before { display: none; }
+  .sk-group { padding-bottom: 1rem; }
+}

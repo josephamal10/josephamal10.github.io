@@ -1,0 +1,463 @@
+/* ==========================================================================
+   Scene — the desk photograph, its candlelight, the closed leather book and
+   the opening choreography's resting states. Owned by SCENE.
+
+   The desk is a photograph (assets/img/desk/desk-photo.webp). It is laid out
+   like background-size: cover, but as a real box (.desk__photo), so anything
+   placed in photo percentages (the candle glow) stays on the photo at any
+   viewport. The closed book sits in the photo's empty centre: scene/desk.js
+   measures the photo and the page and writes the camera (--cam-*) that puts
+   it there, tilted toward the inkwell. When the notebook is open the camera
+   is untransformed and the photo recedes (dimmer, softer).
+   ========================================================================== */
+
+.app {
+  /* closed camera; scene/desk.js replaces these with measured values */
+  --cam-x: 0px;
+  --cam-y: 0px;
+  --cam-s: .8;
+  --cam-r: -9deg;
+
+  /* the book centre inside the camera */
+  --bx: 50%;
+  --by: calc(50% + var(--tabs-h) / 2);
+
+  --hint-x: calc(50% + var(--cam-x));
+  --hint-bottom: max(1.25rem, 3.6svh);
+
+  /* the desk photo's proportions (1672 × 941) */
+  --photo-ar: 1.7768;
+
+  background: #070403;
+}
+
+/* ---------------------------------------------------------------- the desk photograph */
+
+.desk {
+  container-type: size;
+  background: #070403;
+}
+
+.desk__photo {
+  position: absolute;
+  z-index: 0;
+  width: max(100cqw, 100cqh * var(--photo-ar));
+  height: max(100cqh, 100cqw / var(--photo-ar));
+  left: calc(50cqw - max(50cqw, 50cqh * var(--photo-ar)));
+  top: calc(50cqh - max(50cqh, 50cqw / var(--photo-ar)));
+  background: #120a05 url("../assets/img/desk/desk-photo.webp") center / 100% 100% no-repeat;
+  transform-origin: 50% 51%;
+  pointer-events: none;
+}
+.app[data-state="open"] .desk__photo {
+  opacity: .5;
+  filter: blur(1.5px) brightness(.85);
+  transform: scale(1.04);
+}
+
+/* The candle burns at 77% / 5% of the photo: its glow breathes over the desk. */
+.desk__glow {
+  position: absolute;
+  inset: 0;
+  mix-blend-mode: screen;
+  background: radial-gradient(38% 55% at 77% 5%, rgba(255, 170, 80, .16), rgba(255, 150, 60, 0) 70%);
+  animation: candle 3.2s infinite;
+}
+@keyframes candle {
+  0%, 100% { opacity: .9; }
+  12% { opacity: .75; }
+  23% { opacity: 1; }
+  37% { opacity: .82; }
+  49% { opacity: .95; }
+  61% { opacity: .78; }
+  74% { opacity: 1; }
+  88% { opacity: .86; }
+}
+
+/* only a soft lens vignette is left of the old studio light */
+.desk__light { z-index: 0; inset: -6%; background: none; }
+.desk__light::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(closest-corner at 52% 48%, rgba(0, 0, 0, 0) 55%, rgba(0, 0, 0, .12) 80%, rgba(0, 0, 0, .3) 100%);
+}
+
+/* One grain over the photo and the book, so both read as the same photograph. */
+.desk__grain {
+  z-index: 20;
+  opacity: .26;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.55' numOctaves='2' stitchTiles='stitch' seed='3'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3CfeComponentTransfer%3E%3CfeFuncR type='linear' slope='1.6' intercept='-.3'/%3E%3CfeFuncG type='linear' slope='1.6' intercept='-.3'/%3E%3CfeFuncB type='linear' slope='1.6' intercept='-.3'/%3E%3CfeFuncA type='linear' slope='0' intercept='1'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
+  background-size: 220px 220px;
+  transition: opacity .6s ease;
+}
+.app:not([data-state="closed"]) .desk__grain { opacity: .16; }
+
+/* ---------------------------------------------------------------- camera */
+
+.camera { z-index: 1; }
+
+.app[data-state="closed"] .camera {
+  transform: translate(var(--cam-x), var(--cam-y)) scale(var(--cam-s)) rotate(var(--cam-r));
+}
+
+/* ---------------------------------------------------------------- the book's shadow on the desk */
+
+.props {
+  z-index: 0;
+  transform-origin: var(--bx) var(--by);
+}
+
+.prop {
+  position: absolute;
+  left: calc(var(--bx) + var(--px));
+  top: calc(var(--by) + var(--py));
+  width: var(--pw);
+  transform: translate(-50%, -50%) rotate(var(--pr, 0deg));
+}
+
+/* Candlelight comes from the upper right: the shadow falls to the lower left. */
+.prop--book-shadow {
+  --px: 0px;
+  --py: 0px;
+  --pw: var(--page-w);
+  height: var(--page-h);
+}
+.book-shadow {
+  position: absolute;
+  inset: calc(var(--board-over) * -1) calc((var(--board-over) + var(--edge-step) * 5) * -1) calc((var(--board-over) + var(--edge-step) * 5) * -1) 0;
+  border-radius: 3px var(--radius-board) var(--radius-board) 3px;
+  transition: opacity .5s ease;
+}
+.book-shadow--rest {
+  background: #060302;
+  box-shadow:
+    -1px 2px 2px rgba(6, 2, 0, .85),
+    -6px 9px 12px rgba(6, 2, 0, .65),
+    -26px 34px 54px rgba(6, 2, 0, .6),
+    -54px 70px 120px 8px rgba(6, 2, 0, .5);
+}
+.book-shadow--lift {
+  opacity: 0;
+  box-shadow:
+    -10px 14px 24px rgba(6, 2, 0, .4),
+    -34px 46px 84px rgba(6, 2, 0, .34);
+}
+.props.is-lift .book-shadow--lift { opacity: 1; }
+.app[data-state="open"] .prop--book-shadow { opacity: 0; }
+
+/* ---------------------------------------------------------------- the closed book */
+
+/* page-block edges read as being in the book's own shade while closed */
+.app[data-state="closed"] .book__edge,
+.app[data-state="closing"] .book__edge { filter: brightness(.42) sepia(.5) saturate(.9) contrast(1.1); }
+.app[data-state="opening"] .book__edge { transition: filter .9s ease .35s; }
+.app[data-state="closing"] .book__edge { transition: filter .6s ease .4s; }
+.app[data-state="closed"] .book__board,
+.app[data-state="closing"] .book__board {
+  background:
+    linear-gradient(218deg, rgba(255, 160, 80, .06), rgba(0, 0, 0, 0) 45%),
+    #0c0705;
+}
+
+.cover {
+  /* the board covers the top overhang, leaving the block visible at the fore-edge and foot */
+  top: calc(var(--board-over) * -1);
+  background: none;
+  border-radius: 3px var(--radius-board) var(--radius-board) 3px;
+  transform-origin: 0 50%;
+  outline-offset: 10px;
+}
+.app[data-state="closed"] .cover {
+  transition: transform .5s cubic-bezier(.3, .7, .25, 1);
+}
+.app[data-state="closed"] .cover:hover,
+.app[data-state="closed"] .cover:focus-visible {
+  transform: translate3d(-1px, -2px, 0) scale(1.006);
+}
+.app:not([data-state="closed"]) .cover { outline: none; }
+.cover:focus-visible { outline: 1.5px solid rgba(229, 191, 114, .6); outline-offset: 18px; }
+
+/* ---- the front board: black antique leather, gold tooling ---- */
+
+.cover__front {
+  container-type: size;
+  isolation: isolate;
+  display: block;
+  padding: 0;
+  overflow: hidden;
+  background: #0d0704;
+  box-shadow: -1px 1px 1px rgba(0, 0, 0, .6), -2px 3px 5px rgba(0, 0, 0, .4);
+  transition: box-shadow .5s ease;
+
+  --cv-gold: linear-gradient(115deg, #5e3d12 0%, #b98a3c 19%, #e5bf72 28%, #9a6d2a 36%, #4f3310 50%, #b98a3c 69%, #e5bf72 78%, #9a6d2a 86%, #5e3d12 100%);
+  /* lettering: an even foil with a soft sheen, no dark band across a word */
+  --cv-gold-text: linear-gradient(100deg, #a8793a 0%, #e2bb6e 28%, #c79a4e 52%, #efd18c 74%, #a9803a 100%);
+  /* leather and foil textures (SVG noise, generated) */
+  --cv-mottle-l: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='720' height='1000' viewBox='0 0 720 1000' preserveAspectRatio='none'%3E%3Cfilter id='f' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.0042 .0052' numOctaves='5' seed='113'/%3E%3CfeColorMatrix values='0 0 0 0 0.52 0 0 0 0 0.32 0 0 0 0 0.17 2.3 0 0 0 -1.14'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23f%29'/%3E%3C/svg%3E");
+  --cv-mottle-m: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420' viewBox='0 0 420 420' preserveAspectRatio='none'%3E%3Cfilter id='f' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.017' numOctaves='4' seed='127' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.42 0 0 0 0 0.27 0 0 0 0 0.15 2.2 0 0 0 -1.06'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23f%29'/%3E%3C/svg%3E");
+  --cv-pebble-d: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180' preserveAspectRatio='none'%3E%3Cfilter id='f' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.38' numOctaves='3' seed='67' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1.8 0 0 0 -0.8'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23f%29'/%3E%3C/svg%3E");
+  --cv-pebble-l: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180' preserveAspectRatio='none'%3E%3Cfilter id='f' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.42' numOctaves='3' seed='61' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 0.78 0 0 0 0 0.52 1.5 0 0 0 -0.7'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23f%29'/%3E%3C/svg%3E");
+  --cv-wrinkle-d: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500' viewBox='0 0 500 500' preserveAspectRatio='none'%3E%3Cfilter id='f' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.05 .032' numOctaves='3' seed='137' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 2.8 0 0 0 -1.45'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23f%29'/%3E%3C/svg%3E");
+  --cv-wrinkle-l: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='500' height='500' viewBox='0 0 500 500' preserveAspectRatio='none'%3E%3Cfilter id='f' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.05 .032' numOctaves='3' seed='137' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.85 0 0 0 0 0.62 0 0 0 0 0.42 2.8 0 0 0 -1.5'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23f%29'/%3E%3C/svg%3E");
+  --cv-scratch: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='720' height='1000' viewBox='0 0 720 1000' preserveAspectRatio='none'%3E%3Cfilter id='f' x='-20%25' y='-20%25' width='140%25' height='140%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='turbulence' baseFrequency='.0035 .11' numOctaves='2' seed='131'/%3E%3CfeColorMatrix values='0 0 0 0 .78 0 0 0 0 .66 0 0 0 0 .54 7 0 0 0 -5.6'/%3E%3C/filter%3E%3Cg transform='rotate%28-32 360 500%29'%3E%3Crect x='-400' y='-400' width='1520' height='1800' filter='url%28%23f%29'/%3E%3C/g%3E%3C/svg%3E");
+  --cv-wear: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='600' height='800' viewBox='0 0 600 800' preserveAspectRatio='none'%3E%3Cfilter id='f' x='0' y='0' width='100%25' height='100%25' color-interpolation-filters='sRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.006 .008' numOctaves='4' seed='73'/%3E%3CfeColorMatrix values='0 0 0 0 0.62 0 0 0 0 0.42 0 0 0 0 0.26 2.4 0 0 0 -1.25'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23f%29'/%3E%3C/svg%3E");
+  --cv-foil-wear: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180' viewBox='0 0 180 180' preserveAspectRatio='none'%3E%3Cfilter id='f' x='0' y='0' width='100%25' height='100%25'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.75' numOctaves='2' seed='4' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 -3.2 0 0 0 2.6'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url%28%23f%29'/%3E%3C/svg%3E");
+}
+.app[data-state="closed"] .cover:hover .cover__front,
+.app[data-state="closed"] .cover:focus-visible .cover__front {
+  box-shadow: -2px 3px 3px rgba(0, 0, 0, .55), -5px 7px 12px rgba(0, 0, 0, .4);
+}
+
+/* everything drawn on the board, softened to the photograph's own sharpness */
+.cv { position: absolute; inset: 0; border-radius: inherit; filter: blur(.4px); }
+.cv > * { position: absolute; }
+.cv-tex { inset: 0; }
+.cv-mottle-l { background: var(--cv-mottle-l) center / 100% 100% no-repeat; opacity: .13; }
+.cv-mottle-m { background: var(--cv-mottle-m) 0 0 / 420px 420px; opacity: .12; }
+.cv-pebble-d { background: var(--cv-pebble-d) 0 0 / 90px 90px; opacity: .75; }
+.cv-pebble-l { background: var(--cv-pebble-l) 0 0 / 90px 90px; opacity: .16; }
+.cv-wrinkle-d { background: var(--cv-wrinkle-d) 0 0 / 500px 500px; opacity: .38; }
+.cv-wrinkle-l { background: var(--cv-wrinkle-l) -1px -1px / 500px 500px; opacity: .14; }
+.cv-scratch { background: var(--cv-scratch) center / 100% 100% no-repeat; opacity: .32; }
+/* rubbed corners and edges, where hands have held it */
+.cv-wear {
+  background:
+    radial-gradient(9% 7% at 100% 0, rgba(120, 86, 58, .55), rgba(0, 0, 0, 0) 100%),
+    radial-gradient(9% 7% at 100% 100%, rgba(120, 86, 58, .5), rgba(0, 0, 0, 0) 100%),
+    radial-gradient(6% 4% at 0 100%, rgba(110, 80, 55, .4), rgba(0, 0, 0, 0) 100%),
+    var(--cv-wear) center / 100% 100% no-repeat;
+  -webkit-mask-image: radial-gradient(98% 94% at 52% 50%, rgba(0, 0, 0, .2) 62%, #000 96%);
+  mask-image: radial-gradient(98% 94% at 52% 50%, rgba(0, 0, 0, .2) 62%, #000 96%);
+  opacity: .55;
+}
+
+/* the spine, with raised bands edged in gold */
+.cv-spine {
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 7.5%;
+  background: linear-gradient(90deg, rgba(0, 0, 0, .65), rgba(0, 0, 0, .2) 55%, rgba(255, 200, 150, .06) 80%, rgba(0, 0, 0, .5) 92%, rgba(0, 0, 0, .2));
+}
+.cv-band {
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: 2.2%;
+  border-radius: 1px;
+  background: linear-gradient(180deg, rgba(255, 196, 132, .16), rgba(42, 30, 22, .7) 40%, rgba(8, 6, 5, .9) 100%);
+  border-top: 1px solid rgba(201, 164, 84, .45);
+  border-bottom: 1px solid rgba(201, 164, 84, .32);
+  box-shadow: 0 2px 2px rgba(0, 0, 0, .55);
+}
+
+/* gold tooling, pressed into the leather and rubbed away in places */
+.cv-tool {
+  inset: 0;
+  filter: drop-shadow(.2cqi .25cqi 0 rgba(0, 0, 0, .8)) drop-shadow(-.12cqi -.15cqi 0 rgba(255, 217, 160, .16));
+}
+.cv-tool > * { position: absolute; }
+/* the frame and flourishes are rubbed; the lettering stays whole so it reads */
+.cv-frame,
+.cv-frame-inner,
+.cv-corner {
+  -webkit-mask: var(--cv-foil-wear) 0 0 / 180px 180px;
+  mask: var(--cv-foil-wear) 0 0 / 180px 180px;
+}
+.cv-frame { top: 3.4%; right: 4.4%; bottom: 3.4%; left: 9.2%; border: max(1px, .48cqi) solid; border-image: var(--cv-gold) 1; }
+.cv-frame-inner { top: 4.6%; right: 6.1%; bottom: 4.6%; left: 10.8%; border: max(.6px, .22cqi) solid; border-image: var(--cv-gold) 1; }
+.cv-corner { width: 19.4%; height: auto; overflow: visible; }
+.cv-corner--tl { left: 11.4%; top: 5%; }
+.cv-corner--tr { right: 6.7%; top: 5%; transform: scaleX(-1); }
+.cv-corner--bl { left: 11.4%; bottom: 5%; transform: scaleY(-1); }
+.cv-corner--br { right: 6.7%; bottom: 5%; transform: scale(-1); }
+
+.cv-gilt {
+  background: var(--cv-gold-text);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.cv-head,
+.cv-foot {
+  left: 9.2%;
+  right: 4.4%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.cv-head { top: 25.2%; }
+.cv-title {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font: 600 5.3cqi/1.37 'Cinzel', var(--font-display);
+  letter-spacing: .12em;
+  margin-right: -.12em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.cv-orn { width: 24%; height: auto; margin-top: 2.2cqi; overflow: visible; }
+.cv-foot { top: 69.4%; }
+.cv-foot .cv-orn { width: 17%; margin-top: 0; }
+.cv-name {
+  margin-top: 4.2cqi;
+  font: 500 3.9cqi/1 'Cinzel', var(--font-display);
+  letter-spacing: .33em;
+  margin-right: -.33em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* the photo's warm cast on the leather: orange toward the candle, deep brown away from it */
+.cv-warm {
+  inset: 0;
+  mix-blend-mode: soft-light;
+  opacity: .42;
+  background: radial-gradient(95% 75% at 88% 4%, rgba(255, 150, 60, .7), rgba(170, 82, 26, .3) 45%, rgba(20, 8, 2, .45) 100%);
+}
+.cv-glint {
+  inset: 0;
+  mix-blend-mode: screen;
+  background: radial-gradient(70% 45% at 92% 0%, rgba(255, 160, 72, .12), rgba(255, 160, 72, 0) 70%);
+}
+
+/* candlelight from the upper right, shade to the lower left; it flickers with the flame */
+.cv-light {
+  inset: 0;
+  background:
+    linear-gradient(218deg, rgba(255, 176, 98, .17) 0%, rgba(255, 170, 90, .06) 28%, rgba(0, 0, 0, 0) 52%, rgba(0, 0, 0, .42) 100%),
+    radial-gradient(60% 40% at 78% 16%, rgba(255, 214, 160, .07), rgba(0, 0, 0, 0) 100%);
+  animation: candle 3.2s infinite;
+}
+.cv-rim {
+  inset: 0;
+  border-radius: inherit;
+  box-shadow:
+    inset -1.5px 1.5px 0 rgba(255, 150, 62, .32),
+    inset -4px 4px 8px rgba(255, 140, 50, .08),
+    inset 1px -1px 0 rgba(0, 0, 0, .6),
+    inset 0 0 18px rgba(0, 0, 0, .55);
+}
+
+/* light and shade that move across the boards as the cover swings */
+.cover__shade {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(90deg, rgba(0, 0, 0, .55), rgba(0, 0, 0, .75));
+}
+
+/* inside of the front board: matches the resting inner cover exactly
+   (wider than the front so it lands on the inner cover's footprint) */
+.cover__back {
+  top: 0;
+  right: calc(var(--board-out) * -1);
+  bottom: calc(var(--board-out) * -1);
+  left: 0;
+  border-radius: var(--radius-board) 0 0 var(--radius-board);
+  background:
+    linear-gradient(270deg, rgba(0, 0, 0, .62) 0, rgba(0, 0, 0, .22) 10px, rgba(255, 255, 255, .035) 13px, rgba(0, 0, 0, 0) 15px, rgba(0, 0, 0, 0) 40px),
+    radial-gradient(120% 90% at 18% 8%, rgba(255, 255, 255, .045), rgba(255, 255, 255, 0) 60%),
+    linear-gradient(180deg, var(--cover-1), var(--cover-0));
+  box-shadow: inset 1px 1px 0 rgba(255, 255, 255, .045), inset 1px 0 0 rgba(255, 255, 255, .03);
+}
+.cover__back > .cover__shade { background: rgba(0, 0, 0, .7); }
+
+/* while the cover is in the air */
+.app[data-state="opening"] .book,
+.app[data-state="closing"] .book {
+  perspective: 3000px;
+  perspective-origin: 50% 42%;
+}
+
+/* shadow the swinging cover casts on the first page */
+.cover-cast {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  overflow: hidden;
+  pointer-events: none;
+  opacity: 0;
+  border-radius: 0 var(--radius-fore) var(--radius-fore) 0;
+}
+.cover-cast__band {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 118%;
+  background: linear-gradient(90deg, rgba(10, 8, 5, .8) 0%, rgba(10, 8, 5, .66) 60%, rgba(10, 8, 5, .58) 84.7%, rgba(10, 8, 5, 0) 100%);
+}
+
+/* ---------------------------------------------------------------- "tap to open" */
+
+.desk__hint {
+  position: absolute;
+  z-index: 10;
+  left: var(--hint-x);
+  bottom: var(--hint-bottom);
+  display: flex;
+  align-items: center;
+  gap: .8rem;
+  transform: translateX(-50%);
+  font: 400 .64rem/1 var(--font-mono);
+  letter-spacing: .3em;
+  margin-right: -.3em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #c9b79a;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, .8);
+  pointer-events: none;
+  transition: opacity .35s ease;
+}
+.desk__hint::before,
+.desk__hint::after {
+  content: "";
+  width: 1.4rem;
+  height: 1px;
+  background: currentColor;
+  opacity: .45;
+}
+.desk__hint-text { animation: desk-hint-breathe 3.6s ease-in-out infinite; }
+.app:not([data-state="closed"]) .desk__hint-text { animation: none; }
+.desk__hint-tap { display: none; }
+@media (hover: none), (pointer: coarse) {
+  .desk__hint-click { display: none; }
+  .desk__hint-tap { display: inline; }
+}
+@media (orientation: portrait), (max-width: 599px) {
+  .desk__hint { top: calc(50% + var(--cam-y) + var(--page-h) * var(--cam-s) * .5 + 5svh); bottom: auto; }
+}
+@media (orientation: landscape) and (max-height: 560px) {
+  .desk__hint { display: none; }
+}
+.app:not([data-state="closed"]) .desk__hint { opacity: 0; transition-duration: .2s; }
+
+@keyframes desk-hint-breathe {
+  0%, 100% { opacity: .72; }
+  50% { opacity: 1; }
+}
+
+/* ---------------------------------------------------------------- reduced motion */
+
+@media (prefers-reduced-motion: reduce) {
+  .desk__hint-text,
+  .desk__glow,
+  .cv-light { animation: none; }
+  .app[data-state="closed"] .cover,
+  .cover__front,
+  .book-shadow,
+  .desk__grain,
+  .desk__hint,
+  .app[data-state="opening"] .book__edge,
+  .app[data-state="closing"] .book__edge { transition: none; }
+  .app[data-state="closed"] .cover:hover,
+  .app[data-state="closed"] .cover:focus-visible { transform: none; }
+}

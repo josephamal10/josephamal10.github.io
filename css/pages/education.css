@@ -1,0 +1,108 @@
+/* ==========================================================================
+   Education — one spread (js/pages/education.js). Scoped under .edu.
+   Left page: the degree set out in full, like an entry in a register of
+   studies. Right page: the school certificate, languages, and learning
+   beyond the classroom.
+   ========================================================================== */
+
+.edu { position: relative; }
+
+.edu-kicker {
+  margin: 0 0 .55rem;
+  font: italic 500 var(--fs-kicker)/1.25 var(--font-serif);
+  color: var(--ink-3);
+}
+
+/* ---- one qualification ---- */
+.edu-entry {
+  position: relative;
+  padding: 1.05rem 0 .4rem;
+  border-top: 3px double rgba(60, 38, 16, .3);
+}
+.edu-entry + .edu-entry { margin-top: 1.4rem; }
+.edu-entry__title {
+  font: 600 var(--fs-lg)/1.22 var(--font-display);
+  letter-spacing: .01em;
+  color: var(--ink);
+}
+.edu-entry--main .edu-entry__title { font-size: calc(var(--fs-lg) * 1.12); }
+.edu-entry__detail {
+  margin-top: .2rem;
+  font: italic 500 var(--fs-md)/1.35 var(--font-serif);
+  color: var(--ink-2);
+}
+.edu-entry__facts { --dl-term: 6.8rem; margin-top: .9rem; }
+.edu-entry__facts .deflist__value { font-size: var(--fs-md); }
+
+/* ---- notes that belong to the degree ---- */
+.edu-notes { margin-top: 1.5rem; }
+.edu-notes__head {
+  margin-bottom: .45rem;
+  font: 500 var(--fs-label)/1.3 var(--font-sans);
+  letter-spacing: var(--track-label);
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+.edu-notes__list li { font-size: var(--fs-sm); line-height: 1.5; color: var(--ink-2); }
+.edu-notes__list .page-ref { margin-left: .2em; }
+
+/* ---- blocks on the right page ---- */
+.edu-block { margin-top: 1.7rem; }
+.edu-block__head {
+  display: flex;
+  align-items: center;
+  gap: .7rem;
+  margin-bottom: .7rem;
+  font: 600 var(--fs-md)/1.2 var(--font-display);
+  letter-spacing: .06em;
+  color: var(--ink);
+}
+.edu-block__head::after { content: ""; flex: 1; height: 1px; background: rgba(60, 38, 16, .25); }
+
+.edu-langs { display: grid; gap: .1rem; }
+.edu-lang {
+  display: flex;
+  align-items: baseline;
+  gap: .6rem;
+  padding: .45rem 0 .35rem;
+  border-bottom: 1px dotted rgba(60, 38, 16, .3);
+}
+.edu-lang__name { font: 500 var(--fs-md)/1.3 var(--font-serif); color: var(--ink); }
+.edu-lang__level {
+  margin-left: auto;
+  font: 500 var(--fs-xs)/1 var(--font-mono);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-3);
+}
+
+.edu-beyond__lead { font-size: var(--fs-md); line-height: 1.5; color: var(--ink-2); }
+.edu-beyond { margin-top: .5rem; }
+.edu-beyond li { font-size: var(--fs-sm); line-height: 1.5; color: var(--ink-2); }
+.edu-beyond b { font-weight: 600; color: var(--ink); }
+
+/* ---- semester by semester ---- */
+.edu-sems { margin-top: 1.4rem; }
+.edu-sems__table { width: 100%; border-collapse: collapse; font-variant-numeric: tabular-nums; }
+.edu-sems__table th,
+.edu-sems__table td { padding: .34rem .4rem .3rem 0; border-bottom: 1px dotted rgba(60, 38, 16, .3); text-align: left; }
+.edu-sems__table thead th {
+  font: 500 var(--fs-xs)/1.2 var(--font-mono);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+  border-bottom: 1px solid rgba(60, 38, 16, .35);
+}
+.edu-sems__table tbody th { font: 600 var(--fs-sm)/1.3 var(--font-display); color: var(--ink); width: 2.6rem; }
+.edu-sems__table td { font: 400 var(--fs-sm)/1.3 var(--font-serif); color: var(--ink-2); }
+.edu-sems__num { font-weight: 600 !important; color: var(--ink) !important; }
+.edu-sems__pending td { font-style: italic; color: var(--ink-3); }
+
+/* ---- best marks ---- */
+.edu-best { list-style: none; }
+.edu-best__row { display: flex; align-items: baseline; gap: .8rem; padding: .36rem 0 .3rem; border-bottom: 1px dotted rgba(60, 38, 16, .3); }
+.edu-best__what { font: 400 var(--fs-sm)/1.35 var(--font-serif); color: var(--ink); }
+.edu-best__sem { font-style: italic; color: var(--ink-3); }
+.edu-best__mark { margin-left: auto; white-space: nowrap; font: 600 var(--fs-sm)/1.2 var(--font-mono); letter-spacing: .02em; color: var(--ink); }
+.edu--more > .edu-block:first-child { margin-top: 0; }
+.edu-kicker--school { margin-top: 1.5rem; }
