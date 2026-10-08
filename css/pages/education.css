@@ -98,11 +98,5 @@
 .edu-sems__num { font-weight: 600 !important; color: var(--ink) !important; }
 .edu-sems__pending td { font-style: italic; color: var(--ink-3); }
 
-/* ---- best marks ---- */
-.edu-best { list-style: none; }
-.edu-best__row { display: flex; align-items: baseline; gap: .8rem; padding: .36rem 0 .3rem; border-bottom: 1px dotted rgba(60, 38, 16, .3); }
-.edu-best__what { font: 400 var(--fs-sm)/1.35 var(--font-serif); color: var(--ink); }
-.edu-best__sem { font-style: italic; color: var(--ink-3); }
-.edu-best__mark { margin-left: auto; white-space: nowrap; font: 600 var(--fs-sm)/1.2 var(--font-mono); letter-spacing: .02em; color: var(--ink); }
 .edu--more > .edu-block:first-child { margin-top: 0; }
 .edu-kicker--school { margin-top: 1.5rem; }

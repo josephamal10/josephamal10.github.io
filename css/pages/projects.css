@@ -501,3 +501,8 @@
 @media (prefers-reduced-motion: reduce) { .pj-action { transition: none; } }
 /* one spread: the picture shares its page with the paper, team and evidence */
 .pj-work--single .pj-photo { max-width: 68%; }
+
+/* the paper's reference with its certificate beside it */
+.pj-paper-pair { display: grid; grid-template-columns: minmax(0, 1fr) 40%; gap: 1rem; align-items: start; }
+.pj-paper-cert { margin: .2rem 0 0; }
+.pj-paper-cert .figure__caption { font-size: var(--fs-xs); }

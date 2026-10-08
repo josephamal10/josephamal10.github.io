@@ -73,19 +73,6 @@ window.Notebook = window.Notebook || {};
           }))));
     }
 
-    // The best marks on the statements, set like an honours list.
-    function bestMarks(e) {
-      var rows = (e.best || []).filter(function (r) { return r && present(r[0]); });
-      if (!rows.length) return null;
-      return h('section', { class: 'edu-block' },
-        h('h3', { class: 'edu-block__head' }, 'Best marks'),
-        h('ul', { class: 'edu-best' }, rows.map(function (r) {
-          return h('li', { class: 'edu-best__row' },
-            h('span', { class: 'edu-best__what' }, r[0], present(r[2]) ? h('span', { class: 'edu-best__sem' }, ' · ' + r[2]) : null),
-            h('span', { class: 'edu-best__mark' }, r[1]));
-        })));
-    }
-
     // Notes in the margin of the degree: things elsewhere in the notebook that belong to it.
     function degreeNotes() {
       var notes = [];
@@ -162,7 +149,6 @@ window.Notebook = window.Notebook || {};
       },
       build: function () {
         return h('section', { class: 'edu edu--more' },
-          bestMarks(degree),
           school ? h('p', { class: 'edu-kicker edu-kicker--school' }, 'School') : null,
           school ? entry(school, false) : null,
           languages(),

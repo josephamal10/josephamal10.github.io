@@ -60,6 +60,11 @@ window.Notebook = window.Notebook || {};
   /* ------------------------------------------------------------ what the notebook knows */
 
   function profile() { return D().profile || {}; }
+  // 'Aspiring AI / ML engineer' → 'an aspiring AI / ML engineer' (a capital that only starts the line is lowered)
+  function article(t) {
+    t = /^[A-Z][a-z]/.test(t) ? t.charAt(0).toLowerCase() + t.slice(1) : t;
+    return (/^[aeiou]/i.test(t) ? 'an ' : 'a ') + t;
+  }
   // Answers name him rather than guess pronouns: 'Joseph', 'Joseph’s'.
   function who() { var pr = profile(); return String(pr.shortName || pr.name || '').split(' ')[0] || 'the owner'; }
   function whose() { return who() + '’s'; }
@@ -87,11 +92,20 @@ window.Notebook = window.Notebook || {};
     'Vector databases (Pinecone)': ['vector database', 'vector databases', 'vector db', 'pinecone'],
     'Gemini API': ['gemini'], 'Claude API': ['claude', 'anthropic'], 'Multi-provider LLM abstraction': ['multi provider', 'llm abstraction'],
     'Prompt engineering': ['prompt engineering', 'prompting'],
-    'FastAPI': ['fastapi', 'fast api'], 'REST APIs': ['rest api', 'rest apis', 'restful'], 'Streamlit': ['streamlit']
+    'FastAPI': ['fastapi', 'fast api'], 'REST APIs': ['rest api', 'rest apis', 'restful'], 'Streamlit': ['streamlit'],
+    'TypeScript': ['typescript', 'ts'], 'NestJS': ['nestjs', 'nest js', 'nest'], 'PostgreSQL': ['postgres', 'postgresql'],
+    'Hybrid search (Upstash Vector)': ['hybrid search', 'upstash'], 'Model Context Protocol (MCP)': ['mcp', 'model context protocol'],
+    'TensorFlow': ['tensorflow', 'keras'], 'Hugging Face Transformers': ['hugging face', 'huggingface', 'transformers'],
+    'Speech-to-text (Whisper)': ['whisper', 'speech to text', 'speech recognition', 'asr'], 'wav2vec2 speech models': ['wav2vec', 'wav2vec2'],
+    'LangChain': ['langchain', 'lang chain'], 'Reranking': ['reranking', 'reranker', 're ranking'],
+    'LLM evaluation and guardrails': ['llm evaluation', 'evals', 'guardrails', 'evaluation'],
+    'NumPy': ['numpy'], 'Pandas': ['pandas'], 'scikit-learn': ['scikit', 'sklearn', 'scikit learn'],
+    'Docker': ['docker', 'containers'], 'GitHub Actions (CI)': ['github actions', 'ci cd', 'cicd', 'continuous integration'],
+    'pytest': ['pytest', 'unit tests', 'unit testing'], 'ONNX Runtime (int8 quantization)': ['onnx', 'quantization', 'quantisation']
   };
   // Things a visitor might ask about that are not in the notebook: answered honestly.
-  var OTHER_TECH = ['react', 'angular', 'vue', 'nodejs', 'django', 'aws', 'azure', 'gcp', 'docker', 'kubernetes',
-    'typescript', 'php', 'ruby', 'golang', 'rust', 'kotlin', 'swift', 'flutter', 'tensorflow', 'excel', 'power bi',
+  var OTHER_TECH = ['react', 'angular', 'vue', 'nodejs', 'django', 'aws', 'azure', 'gcp', 'kubernetes',
+    'php', 'ruby', 'golang', 'rust', 'kotlin', 'swift', 'flutter', 'excel', 'power bi',
     'tableau', 'figma', 'linux', 'dotnet', 'scala', 'matlab', 'photoshop'];
 
   function projectWords(p) {
@@ -113,7 +127,7 @@ window.Notebook = window.Notebook || {};
     var pr = profile();
     var s = pr.seeking || {};
     return [
-      para(pr.name + ' is ' + (pr.headline ? 'an ' + pr.headline : 'a student') +
+      para(pr.name + ' is ' + (pr.headline ? article(pr.headline) : 'a student') +
         (pr.headlineDetail ? ' (' + pr.headlineDetail + ')' : '') + (pr.location ? ', based in ' + pr.location : '') + '.'),
       (pr.summary || []).length ? para(pr.summary.join(' ')) : null,
       (s.roles || []).length ? para(who() + ' is looking for work as a ' + joinList(s.roles, ' or ') + '.', ' ', ref('about')) : null
@@ -271,7 +285,7 @@ window.Notebook = window.Notebook || {};
     if (s.aim) out.push(para(s.aim));
     var e = (D().education || [])[0];
     if (hasAny(q, ['when', 'available', 'availability', 'graduate', 'graduation', 'start', 'join', 'notice'])) {
-      out.push(para(who() + ' is ' + (pr.headline ? 'an ' + pr.headline : 'a student') + (e && e.period ? ' (' + e.period.label + (e.stage ? ', ' + e.stage : '') + ')' : '') + '. The notebook doesn’t give a start date, so please ask ' + who() + '. ', ref('contact', 'Contact:')));
+      out.push(para(who() + ' is ' + (pr.headline ? article(pr.headline) : 'a student') + (e && e.period ? ' (' + e.period.label + (e.stage ? ', ' + e.stage : '') + ')' : '') + '. The notebook doesn’t give a start date, so please ask ' + who() + '. ', ref('contact', 'Contact:')));
     }
     return out;
   }

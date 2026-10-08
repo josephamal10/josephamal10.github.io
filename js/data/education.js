@@ -22,14 +22,8 @@ Notebook.data.education = [
       { sem: 'IV', exam: 'Apr 2025', credits: 27, sgpa: '8.1', cgpa: '7.6' },
       { sem: 'V', exam: 'Oct/Nov 2025', credits: 27, sgpa: '8.1', cgpa: '7.7' },
       { sem: 'VI', exam: null, credits: null, sgpa: null, cgpa: null, note: 'Mark sheet awaited' }
-    ],
-    best: [
-      ['Python Programming Lab', '100 / 100', 'Sem III'],
-      ['Three Coursera generative-AI courses, taken as additional credits', '100 / 100 each', 'Sem III'],
-      ['Internet of Things Lab', '99 / 100', 'Sem III'],
-      ['Embedded Systems Lab', '96 / 100', 'Sem II'],
-      ['J2EE Lab', '95 / 100', 'Sem V']
     ]
+
   },
   {
     id: 'hsc',

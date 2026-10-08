@@ -600,7 +600,33 @@ window.Notebook = window.Notebook || {};
         h('dt', { class: 'visually-hidden' }, r[0]),
         h('dd', null, r[1]));
     }));
+    var cert = paperCertificate(p);
+    if (cert) return block('paper', 'Paper', h('div', { class: 'pj-paper-pair' }, h('div', { class: 'pj-cite-wrap' }, dl), cert));
     return block('paper', 'Paper', h('div', { class: 'pj-cite-wrap' }, dl));
+  }
+
+  // A project with no picture of its own shows the paper's certificate beside its reference:
+  // touching it opens the document, as on the certificates pages.
+  function paperCertificate(p) {
+    var id = p.paper && p.paper.evidence;
+    if (!id || hasImage(p)) return null;
+    var c = findCertificate(N.data || {}, id);
+    if (!c || !present(c.thumb)) return null;
+    var fig = N.ui.figure({ src: c.thumb, alt: 'The ' + String(c.type || 'certificate').toLowerCase() + ' for “' + c.title + '”',
+      caption: 'Touch to open the certificate', style: 'clipped', rotate: -1.6, className: 'pj-paper-cert' });
+    if (!fig) return null;
+    var mount = fig.querySelector('.figure__mount') || fig;
+    mount.classList.add('is-zoomable');
+    mount.setAttribute('role', 'button');
+    mount.setAttribute('tabindex', '0');
+    mount.setAttribute('aria-label', 'Open the certificate: ' + c.title);
+    function open() {
+      if (N.viewer && typeof N.viewer.open === 'function') N.viewer.open(c.id, { trigger: mount });
+      else if (c.pdf) window.open(c.pdf, '_blank', 'noopener');
+    }
+    mount.addEventListener('click', open);
+    mount.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
+    return fig;
   }
 
   // The project's picture, taped in; touching it opens it larger (js/ui/lightbox.js).

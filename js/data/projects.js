@@ -159,7 +159,7 @@ Notebook.data.projects = [
       date: { iso: '2026-02-24', label: '24 Feb 2026' },
       evidence: 'cert-atneai-2026'
     },
-    labels: { purpose: 'Context', howItWorks: 'What it covered' },
+    labels: { purpose: 'Context', howItWorks: 'What it covered', work: 'Comparison, challenges and team' },
     summary: 'A presentation on how blockchain and smart contracts let financial services such as lending, borrowing, trading and payments work without banks or middlemen.',
     purpose: 'Traditional finance depends on intermediaries, which brings high transaction fees, slow processing, low transparency and limited access for many people.',
     howItWorks: [

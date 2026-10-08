@@ -13,6 +13,8 @@ Notebook.data.skills = {
       label: 'Deep learning',
       items: [
         'PyTorch',
+        'TensorFlow',
+        'Hugging Face Transformers',
         'CNN-LSTM architectures',
         'Model fine-tuning and domain adaptation',
         'Class-imbalance handling (weighted sampling)',
@@ -23,6 +25,8 @@ Notebook.data.skills = {
       id: 'audio-speech',
       label: 'Audio and speech',
       items: [
+        'Speech-to-text (Whisper)',
+        'wav2vec2 speech models',
         'Librosa',
         'Torchaudio',
         'Audio feature extraction',
@@ -36,6 +40,7 @@ Notebook.data.skills = {
       label: 'LLM and GenAI',
       items: [
         'Retrieval-augmented generation (RAG)',
+        'LangChain',
         'Embeddings (Jina)',
         'Vector databases (Pinecone)',
         'Gemini API',
@@ -43,13 +48,25 @@ Notebook.data.skills = {
         'Multi-provider LLM abstraction',
         'Hybrid search (Upstash Vector)',
         'Model Context Protocol (MCP)',
+        'Reranking',
+        'LLM evaluation and guardrails',
         'Prompt engineering'
       ]
     },
     {
       id: 'backend-apps',
       label: 'Backend and apps',
-      items: ['FastAPI', 'NestJS', 'REST APIs', 'Streamlit', 'Flask']
+      items: ['FastAPI', 'NestJS', 'REST APIs', 'PostgreSQL', 'Streamlit', 'Flask']
+    },
+    {
+      id: 'data-ml',
+      label: 'Data and ML libraries',
+      items: ['NumPy', 'Pandas', 'scikit-learn']
+    },
+    {
+      id: 'mlops',
+      label: 'MLOps and tooling',
+      items: ['Docker', 'GitHub Actions (CI)', 'pytest', 'ONNX Runtime (int8 quantization)']
     },
     {
       id: 'technologies',
@@ -78,6 +95,17 @@ Notebook.data.skills = {
     'Voice anti-spoofing and deepfake detection': ['synthetic-voice-detection'],
     'ASVspoof 2019': ['synthetic-voice-detection'],
     'Retrieval-augmented generation (RAG)': ['rag-golf-assistant', 'rag-knowledge-base-api'],
+    'Speech-to-text (Whisper)': ['confident-talk-analyzer'],
+    'wav2vec2 speech models': ['confident-talk-analyzer'],
+    'Reranking': ['rag-golf-assistant'],
+    'LLM evaluation and guardrails': ['confident-talk-analyzer', 'rag-golf-assistant'],
+    'PostgreSQL': ['confident-talk-analyzer'],
+    'NumPy': ['confident-talk-analyzer', 'synthetic-voice-detection'],
+    'scikit-learn': ['synthetic-voice-detection'],
+    'Docker': ['confident-talk-analyzer', 'rag-golf-assistant'],
+    'GitHub Actions (CI)': ['confident-talk-analyzer', 'rag-golf-assistant'],
+    'pytest': ['confident-talk-analyzer', 'rag-golf-assistant'],
+    'ONNX Runtime (int8 quantization)': ['confident-talk-analyzer'],
     'TypeScript': ['rag-knowledge-base-api'],
     'NestJS': ['rag-knowledge-base-api'],
     'Hybrid search (Upstash Vector)': ['rag-knowledge-base-api'],
