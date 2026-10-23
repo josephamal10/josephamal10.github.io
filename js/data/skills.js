@@ -41,13 +41,14 @@ Notebook.data.skills = {
       items: [
         'Retrieval-augmented generation (RAG)',
         'LangChain',
-        'Embeddings (Jina)',
-        'Vector databases (Pinecone)',
+        'Embeddings (Jina, Gemini)',
+        'Vector databases (Pinecone, Upstash)',
         'Gemini API',
         'Claude API',
         'Multi-provider LLM abstraction',
         'Hybrid search (Upstash Vector)',
         'Model Context Protocol (MCP)',
+        'Query routing and follow-up rewriting',
         'Reranking',
         'LLM evaluation and guardrails',
         'Prompt engineering'
@@ -56,7 +57,7 @@ Notebook.data.skills = {
     {
       id: 'backend-apps',
       label: 'Backend and apps',
-      items: ['FastAPI', 'NestJS', 'REST APIs', 'PostgreSQL', 'Streamlit', 'Flask']
+      items: ['FastAPI', 'NestJS', 'REST APIs', 'Streaming responses (Server-Sent Events)', 'React', 'PostgreSQL', 'SQLite', 'Streamlit', 'Flask']
     },
     {
       id: 'data-ml',
@@ -66,7 +67,7 @@ Notebook.data.skills = {
     {
       id: 'mlops',
       label: 'MLOps and tooling',
-      items: ['Docker', 'GitHub Actions (CI)', 'pytest', 'ONNX Runtime (int8 quantization)']
+      items: ['Docker', 'GitHub Actions (CI)', 'pytest', 'Jest and Vitest', 'Cloud deployment (Modal, Render, Vercel)', 'ONNX Runtime (int8 quantization)']
     },
     {
       id: 'technologies',
@@ -102,8 +103,8 @@ Notebook.data.skills = {
     'PostgreSQL': ['confident-talk-analyzer'],
     'NumPy': ['confident-talk-analyzer', 'synthetic-voice-detection'],
     'scikit-learn': ['synthetic-voice-detection'],
-    'Docker': ['confident-talk-analyzer', 'rag-golf-assistant'],
-    'GitHub Actions (CI)': ['confident-talk-analyzer', 'rag-golf-assistant'],
+    'Docker': ['confident-talk-analyzer', 'rag-golf-assistant', 'rag-knowledge-base-api'],
+    'GitHub Actions (CI)': ['confident-talk-analyzer', 'rag-golf-assistant', 'rag-knowledge-base-api'],
     'pytest': ['confident-talk-analyzer', 'rag-golf-assistant'],
     'ONNX Runtime (int8 quantization)': ['confident-talk-analyzer'],
     'TypeScript': ['rag-knowledge-base-api'],
@@ -112,8 +113,15 @@ Notebook.data.skills = {
     'Model Context Protocol (MCP)': ['rag-knowledge-base-api'],
     'Gemini API': ['rag-golf-assistant', 'rag-knowledge-base-api'],
     'FastAPI': ['rag-golf-assistant'],
-    'Vector databases (Pinecone)': ['rag-golf-assistant'],
-    'Embeddings (Jina)': ['rag-golf-assistant'],
+    'Vector databases (Pinecone, Upstash)': ['rag-golf-assistant', 'rag-knowledge-base-api'],
+    'Embeddings (Jina, Gemini)': ['rag-golf-assistant', 'rag-knowledge-base-api'],
+    'Query routing and follow-up rewriting': ['rag-golf-assistant', 'rag-knowledge-base-api'],
+    'Streaming responses (Server-Sent Events)': ['rag-knowledge-base-api'],
+    'React': ['rag-knowledge-base-api'],
+    'SQLite': ['confident-talk-analyzer', 'synthetic-voice-detection', 'rag-knowledge-base-api'],
+    'Jest and Vitest': ['rag-knowledge-base-api'],
+    'Cloud deployment (Modal, Render, Vercel)': ['confident-talk-analyzer', 'rag-knowledge-base-api'],
+    'REST APIs': ['rag-golf-assistant', 'rag-knowledge-base-api'],
     'Streamlit': ['synthetic-voice-detection'],
     'Flask': ['confident-talk-analyzer'],
     'HTML': ['confident-talk-analyzer'],

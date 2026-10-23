@@ -327,40 +327,80 @@ Notebook.data.projects = [
     learned: null
   },
   {
-    // From the project's README and code (RAG-KNOWLEDGE-BASED-API, a NestJS app; package name golf-rag-nestjs).
-    // Built with Aparna, a fellow intern (Joseph, Oct 2026); he is fine with the clubs being named.
+    // From the public repo (C:/portfolio/rag-knowledge-base-api: README, code, tests, git history, Oct 2026).
+    // The API was built at Nanonino with Aparna, a fellow intern, and shared with Nanonino's permission;
+    // the React web app, tests, CI and deployment were added afterwards. Client names were removed from the
+    // public repo, so none are named here: the live demo runs on a fictional demo club.
     id: 'rag-knowledge-base-api',
     number: '06',
     title: 'RAG Knowledge Base API',
-    kind: 'Hybrid-search RAG API with an MCP server · internship at Nanonino',
-    period: { start: '2026-09', end: '2026-09', label: 'Sep 2026' },
-    role: 'Built it with Aparna, a fellow intern, at Nanonino',
-    labels: { purpose: 'What it is for', howItWorks: 'How it answers', challenges: 'Design choices', work: 'How it answers, in numbers' },
-    spreads: 1,
-    summary: 'A NestJS API that turns a golf club’s documents into a knowledge base a voice bot can question: hybrid search finds the right passages and Gemini answers only from them.',
-    purpose: 'Each golf course keeps its own knowledge base (rules, lodging, events, contacts, real estate), loaded from PDF, Word or text files, pasted text or web pages, and answered through a REST API or as a tool over MCP. Loaded so far with documents for Roehampton Club (its Golf Course Management Policy, 2022–2026), Highland Creek and Indian Springs, Montana.',
+    kind: 'Full-stack RAG app: NestJS API + React chat · internship at Nanonino',
+    period: { start: '2026-09', end: '2026-10', label: 'Sep 2026 · web app Oct 2026' },
+    role: 'Built the API with Aparna, a fellow intern, at Nanonino; then added the web app, tests and deployment',
+    labels: { purpose: 'What it is for', howItWorks: 'How it answers', shot: 'In use', challenges: 'Design choices', results: 'How it is built and tested', notes: 'Design choices and tools' },
+    spreads: 2,
+    summary: 'An AI assistant that answers questions using only a business’s own documents, and says so honestly when they do not cover something. Answers stream in word by word, with the sources they came from.',
+    purpose: 'Built for golf clubs: each club keeps its own knowledge base (rules, lodging, events, contacts, real estate), loaded from PDF, Word or text files, pasted text or web pages. It is answered through a REST API, a chat web app, or as a tool over MCP for a voice bot. The live demo runs on a fictional demo club.',
     howItWorks: [
-      'Documents are split into 500-character chunks, kept in SQLite and indexed in Upstash Vector, one namespace per course.',
-      'A question is searched two ways at once: Gemini embeddings for meaning and keyword vectors for exact terms such as rule numbers, fused by reciprocal rank fusion.',
-      'A classifier picks the knowledge category first; a vague or too broad question gets a clarifying question back.',
-      'Gemini writes the answer using only the passages found, or says the documents do not cover it.'
+      'Documents are split into ~500-character chunks, kept in SQLite and indexed in Upstash Vector, one namespace per club.',
+      'A follow-up such as “and check-out?” is rewritten into a full question using the recent conversation.',
+      'Gemini picks the topic first; a greeting or a question with nothing behind it gets a clarifying question back.',
+      'Hybrid search: Gemini embeddings for meaning and keyword vectors for exact terms, fused by reciprocal rank fusion.',
+      'Gemini answers from the passages found only; the answer streams over Server-Sent Events, followed by its sources.'
     ],
     sketch: {
       type: 'flow',
       caption: 'How it answers',
-      steps: ['Question + course', 'Category check', 'Hybrid search: meaning + keywords', 'Answer from the documents']
+      steps: ['Question + recent chat', 'Follow-up rewritten, topic picked', 'Hybrid search: meaning + keywords', 'Streamed answer + sources']
     },
     links: [
+      { label: 'Live demo', url: 'https://rag-knowledge-base-gray.vercel.app', kind: 'demo', note: 'First answer can take up to a minute' },
       { label: 'GitHub', url: 'https://github.com/josephamal10/rag-knowledge-base-api', kind: 'code' }
     ],
-    image: null,
-    stats: [['14', 'REST endpoints'], ['5', 'knowledge categories'], ['1,536', 'embedding dimensions'], ['2', 'ways in: REST API and MCP']],
+    image: {
+      src: 'assets/img/projects/rag-kb-chat.webp',
+      srcSmall: 'assets/img/projects/rag-kb-chat-sm.webp',
+      width: 1200,
+      height: 806,
+      alt: 'Chat screen of the RAG Knowledge-Base: a question about check-in, a follow-up about check-out understood from context, and the two sources used',
+      caption: 'A follow-up understood from context, with the sources used'
+    },
+    stats: [['55', 'automated tests'], ['15', 'API endpoints'], ['5', 'topics per club'], ['3', 'ways in: REST, chat app, MCP']],
+    comparison: {
+      caption: 'What runs where · live since Oct 2026',
+      columns: ['Part', 'Built with', 'Runs on'],
+      rows: [
+        ['API', 'NestJS, TypeScript', 'Render'],
+        ['Chat web app', 'React 19, Vite', 'Vercel'],
+        ['Search index', 'Upstash Vector (hybrid)', 'Upstash'],
+        ['Documents', 'SQLite, TypeORM', 'API server'],
+        ['Docs for developers', 'Swagger / OpenAPI', '/api'],
+        ['Tool for AI agents', 'Model Context Protocol', '/mcp and stdio'],
+        ['Local start', 'Docker Compose, nginx', 'one command']
+      ]
+    },
+    comparison2: {
+      caption: 'Automated tests · run on every push (GitHub Actions)',
+      columns: ['What is tested', 'Tests'],
+      rows: [
+        ['Answer pipeline and streaming', '12'],
+        ['Chunking', '7'],
+        ['Keyword (sparse) vectors', '7'],
+        ['Follow-up rewriting', '6'],
+        ['Topic routing', '5'],
+        ['Admin key and rate limiting', '9'],
+        ['Club ids', '3'],
+        ['Streaming parser in the web app', '6']
+      ]
+    },
     challenges: [
-      'Hybrid search without a hosted keyword model: keyword vectors are built in the app (hashed terms, log-TF weights).',
-      'Re-indexing only embeds new text: each vector’s id is a hash of its chunk, so unchanged chunks just get their details updated.'
+      'Hybrid search without a hosted keyword model: keyword vectors are built in the app from hashed, weighted terms.',
+      'Re-indexing only embeds new text: each vector’s id is a hash of its chunk, so unchanged chunks are never embedded twice.',
+      'When nothing relevant is found, the model replies with a hidden marker that is never streamed and becomes an honest “I don’t have information”.',
+      'A public demo needs guards: an admin key on every endpoint that changes data, per-visitor rate limits and an allow-list for the web app.'
     ],
-    technologies: ['TypeScript', 'NestJS', 'Retrieval-augmented generation (RAG)', 'Gemini API', 'Gemini embeddings', 'Upstash Vector (hybrid)', 'SQLite (TypeORM)', 'Model Context Protocol (MCP)', 'Swagger / OpenAPI'],
-    team: { label: 'Built with', members: ['Joseph Amal', 'Aparna'], affiliation: 'Interns at Nanonino' },
+    technologies: ['TypeScript', 'NestJS', 'Retrieval-augmented generation (RAG)', 'Gemini API', 'Gemini embeddings', 'Upstash Vector (hybrid)', 'SQLite (TypeORM)', 'Server-Sent Events', 'Model Context Protocol (MCP)', 'React 19 + Vite', 'Jest and Vitest', 'GitHub Actions', 'Docker', 'Render and Vercel', 'Swagger / OpenAPI'],
+    team: { label: 'API built with', members: ['Joseph Amal', 'Aparna'], affiliation: 'Interns at Nanonino' },
     code: null,
     evidence: [],
     learned: null

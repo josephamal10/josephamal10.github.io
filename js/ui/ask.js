@@ -88,8 +88,8 @@ window.Notebook = window.Notebook || {};
     'Librosa': ['librosa'], 'Torchaudio': ['torchaudio'], 'Audio feature extraction': ['audio features', 'feature extraction', 'mfcc', 'mfccs'],
     'Voice anti-spoofing and deepfake detection': ['anti spoofing', 'antispoofing', 'spoofing', 'deepfake', 'deepfakes', 'deep fake'],
     'ASVspoof 2019': ['asvspoof'], 'ElevenLabs (generating test data)': ['elevenlabs', 'eleven labs'],
-    'Retrieval-augmented generation (RAG)': ['rag', 'retrieval augmented'], 'Embeddings (Jina)': ['embeddings', 'embedding', 'jina'],
-    'Vector databases (Pinecone)': ['vector database', 'vector databases', 'vector db', 'pinecone'],
+    'Retrieval-augmented generation (RAG)': ['rag', 'retrieval augmented'], 'Embeddings (Jina, Gemini)': ['embeddings', 'embedding', 'jina'],
+    'Vector databases (Pinecone, Upstash)': ['vector database', 'vector databases', 'vector db', 'pinecone'],
     'Gemini API': ['gemini'], 'Claude API': ['claude', 'anthropic'], 'Multi-provider LLM abstraction': ['multi provider', 'llm abstraction'],
     'Prompt engineering': ['prompt engineering', 'prompting'],
     'FastAPI': ['fastapi', 'fast api'], 'REST APIs': ['rest api', 'rest apis', 'restful'], 'Streamlit': ['streamlit'],
@@ -101,10 +101,13 @@ window.Notebook = window.Notebook || {};
     'LLM evaluation and guardrails': ['llm evaluation', 'evals', 'guardrails', 'evaluation'],
     'NumPy': ['numpy'], 'Pandas': ['pandas'], 'scikit-learn': ['scikit', 'sklearn', 'scikit learn'],
     'Docker': ['docker', 'containers'], 'GitHub Actions (CI)': ['github actions', 'ci cd', 'cicd', 'continuous integration'],
-    'pytest': ['pytest', 'unit tests', 'unit testing'], 'ONNX Runtime (int8 quantization)': ['onnx', 'quantization', 'quantisation']
+    'pytest': ['pytest', 'unit tests', 'unit testing'], 'Jest and Vitest': ['jest', 'vitest'],
+    'React': ['react', 'reactjs', 'react js'], 'SQLite': ['sqlite'], 'Streaming responses (Server-Sent Events)': ['streaming', 'server sent events', 'sse'],
+    'Query routing and follow-up rewriting': ['query routing', 'query rewriting', 'follow up questions'],
+    'Cloud deployment (Modal, Render, Vercel)': ['deployment', 'deploy', 'render', 'vercel', 'modal'], 'ONNX Runtime (int8 quantization)': ['onnx', 'quantization', 'quantisation']
   };
   // Things a visitor might ask about that are not in the notebook: answered honestly.
-  var OTHER_TECH = ['react', 'angular', 'vue', 'nodejs', 'django', 'aws', 'azure', 'gcp', 'kubernetes',
+  var OTHER_TECH = ['angular', 'vue', 'nodejs', 'django', 'aws', 'azure', 'gcp', 'kubernetes',
     'php', 'ruby', 'golang', 'rust', 'kotlin', 'swift', 'flutter', 'excel', 'power bi',
     'tableau', 'figma', 'linux', 'dotnet', 'scala', 'matlab', 'photoshop'];
 
@@ -113,7 +116,7 @@ window.Notebook = window.Notebook || {};
       'confident-talk-analyzer': ['confident', 'speech', 'voice', 'analyzer', 'analyser', 'confidence'],
       'automatic-garage': ['garage', 'blynk', 'iot', 'servo', 'smart garage', 'door'],
       'defi-presentation': ['blockchain', 'defi', 'decentralized', 'decentralised', 'finance', 'smart contracts', 'ethereum', 'crypto'],
-      'rag-knowledge-base-api': ['knowledge base', 'nestjs', 'upstash', 'mcp', 'hybrid search', 'voice bot', 'knowledge base api', 'aparna', 'roehampton'],
+      'rag-knowledge-base-api': ['knowledge base', 'nestjs', 'upstash', 'mcp', 'hybrid search', 'voice bot', 'knowledge base api', 'aparna', 'react', 'streaming', 'chat app'],
       'rag-golf-assistant': ['caddieai', 'caddie', 'rag', 'golf', 'golfer', 'golfers', 'courserev', 'retrieval', 'chatbot', 'question answering', 'assistant', 'pinecone', 'jina'],
       'synthetic-voice-detection': ['synthetic', 'synthetic voice', 'voice detection', 'deepfake', 'deepfakes', 'deep fake', 'cloned voice',
         'voice cloning', 'anti spoofing', 'spoofing', 'asvspoof', 'fake voice', 'ai voice']
