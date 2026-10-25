@@ -279,3 +279,7 @@
 .ach-doc__open:hover { background: var(--ink); color: var(--paper); }
 .ach-doc__open:focus-visible { outline: 2px solid var(--focus-paper); outline-offset: 2px; }
 .xr-actions { margin: .55rem 0 .1rem; }
+
+/* ---------------------------------------------------------------- the certificate for an entry */
+.xp-cert { display: flex; flex-wrap: wrap; align-items: center; gap: .3rem .9rem; }
+.xp-cert .xp-refs { font-size: var(--fs-sm); }

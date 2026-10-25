@@ -214,8 +214,26 @@ window.Notebook = window.Notebook || {};
       hasTech ? h('dl', { class: 'xp-fields xp-fields--tech' },
         h('div', { class: 'xp-line' },
           h('dt', { class: 'xp-line__key xp-key' }, 'Technologies'),
-          h('dd', { class: 'xp-line__val' }, ui.chipList(e.technologies, { className: 'xp-chips' })))) : null
+          h('dd', { class: 'xp-line__val' }, ui.chipList(e.technologies, { className: 'xp-chips' })))) : null,
+      certLine(e)
     );
+  }
+
+  // The certificate for an entry: a button that opens it, and where it is filed.
+  function certLine(e) {
+    var cert = present(e.evidence) ? certFor(e.evidence) : null;
+    if (!cert) return null;
+    var btn = h('button', { type: 'button', class: 'ach-doc__open xp-cert__open', 'aria-haspopup': 'dialog' },
+      'View the certificate', h('span', { class: 'visually-hidden' }, ': ' + cert.title));
+    btn.addEventListener('click', function () {
+      if (N.viewer && typeof N.viewer.open === 'function') N.viewer.open(cert.id, { trigger: btn });
+      else if (cert.pdf) window.open(cert.pdf, '_blank', 'noopener');
+    });
+    return h('dl', { class: 'xp-fields xp-fields--cert' },
+      h('div', { class: 'xp-line' },
+        h('dt', { class: 'xp-line__key xp-key' }, 'Certificate'),
+        h('dd', { class: 'xp-line__val xp-cert' }, btn,
+          h('span', { class: 'xp-refs' }, xref('Filed with the certificates', function () { return [certPage(e.evidence)]; }, 'Certificates')))));
   }
 
   function buildLog(data, ui) {

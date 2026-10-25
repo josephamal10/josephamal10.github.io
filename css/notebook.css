@@ -925,6 +925,12 @@
 .fit-pages .xr-item,
 .fit-pages .edu-entry,
 .fit-pages li { break-inside: avoid; }
+/* an experience entry is longer than one screen: let it run on, its own lines still kept whole */
+.fit-pages .xp-entry { break-inside: auto; }
+.fit-pages .xp-line { break-inside: avoid; }
+.fit-pages .xp-line--text { break-inside: auto; }
+/* the ruled filler evens out a desktop page; on phone screens it would only add blank screens */
+.fit-pages .xp-filler { display: none; }
 .fit-pages h2, .fit-pages h3 { break-after: avoid; }
 .leaf__screens {
   position: absolute;

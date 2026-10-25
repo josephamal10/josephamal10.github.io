@@ -30,6 +30,25 @@ Notebook.data = Notebook.data || {};
     note: 'Coursera certificates are issued in the name JOSEPHAMAL ANTONY.',
     groups: [
       {
+        id: 'internship',
+        label: 'Internship',
+        items: [
+          Object.assign({
+            id: 'cert-nanonino-internship',
+            type: 'Internship certificate',
+            title: 'AI Engineer internship',
+            issuer: 'Nanonino, Coimbatore',
+            platform: null,
+            event: 'Three-month internship in the role of AI Engineer',
+            date: { iso: '2026-10-23', label: '20 Jul – 23 Oct 2026' },
+            verifyUrl: null,
+            credentialId: null,
+            nameOnDocument: 'JOSEPH AMAL A',
+            courses: []
+          }, asset('cert-nanonino-internship'))
+        ]
+      },
+      {
         id: 'conference',
         label: 'Conference',
         items: [

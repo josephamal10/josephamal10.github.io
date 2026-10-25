@@ -5,10 +5,11 @@ Notebook.data.experience = [
   {
     id: 'nanonino-academic-project',
     organization: 'Nanonino',
-    role: 'Internship',
+    role: 'AI Engineer (internship)',
     engagement: 'A three-month internship, in Year IV of the M.Sc.',
-    // Internship certificate (coming): 22 Jul – 23 Oct 2026, three months
-    period: { start: '2026-07-22', end: '2026-10-23', label: 'Jul – Oct 2026' },
+    // Internship certificate (signed for the manager, Vijay Shankar K): "in the role of AI ENGINEER", 20 Jul – 23 Oct 2026
+    period: { start: '2026-07-20', end: '2026-10-23', label: 'Jul – Oct 2026' },
+    evidence: 'cert-nanonino-internship',
     summary: 'Project work under the guidance and supervision of the company’s technical team, for practical exposure and industry experience.',
     points: [
       'Built a Synthetic Voice Detection System end to end, as the only developer: a deep learning model (CNN + BiLSTM on MFCC features) that tells a real human voice from an AI-generated or cloned one.',
@@ -18,10 +19,11 @@ Notebook.data.experience = [
     projects: ['synthetic-voice-detection', 'rag-golf-assistant', 'rag-knowledge-base-api'],
     project: 'synthetic-voice-detection',
     log: [
-      { date: { iso: '2026-07-22', label: '22 Jul 2026' }, text: 'Started a three-month internship with the company (to 23 Oct 2026), in Year IV of the M.Sc.' },
+      { date: { iso: '2026-07-20', label: '20 Jul 2026' }, text: 'Started a three-month internship with the company as an AI Engineer (to 23 Oct 2026), in Year IV of the M.Sc.' },
       { date: { iso: '2026-08', label: 'Aug 2026' }, text: 'Built CaddieAI, a RAG question-answering assistant for golfers, for the courserev.ai project.', project: 'rag-golf-assistant' },
       { date: { iso: '2026-08', label: 'Aug – Sep 2026' }, text: 'Built the Synthetic Voice Detection System end to end, as the only developer.', project: 'synthetic-voice-detection' },
-      { date: { iso: '2026-09', label: 'Sep 2026' }, text: 'Built the RAG Knowledge Base API with Aparna, a fellow intern: hybrid search over a golf club’s documents, with an MCP server for a voice bot.', project: 'rag-knowledge-base-api' }
+      { date: { iso: '2026-09', label: 'Sep 2026' }, text: 'Built the RAG Knowledge Base API with Aparna, a fellow intern: hybrid search over a golf club’s documents, with an MCP server for a voice bot.', project: 'rag-knowledge-base-api' },
+      { date: { iso: '2026-10-23', label: '23 Oct 2026' }, text: 'Completed the internship; internship certificate issued for the role of AI Engineer.' }
     ],
     technologies: ['Python', 'PyTorch', 'CNN + BiLSTM', 'Librosa', 'Streamlit', 'Retrieval-augmented generation (RAG)', 'Pinecone', 'Gemini API', 'FastAPI', 'NestJS', 'Upstash Vector', 'MCP']
   }

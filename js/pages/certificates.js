@@ -55,23 +55,29 @@ window.Notebook = window.Notebook || {};
   // evenly between them, so the last page of the register is never left nearly empty.
   function paginate(groups) {
     var pages = fill(groups, 1);
-    if (pages.length < 2 || pages.length % 2 === 0) return pages;
-    // of the splits into that many pages, keep the one whose fullest and emptiest pages are closest
-    var want = pages.length + 1, best = null, bestSpread = Infinity;
-    for (var k = 0.98; k > 0.4; k -= 0.02) {
+    if (pages.length < 2) return pages;
+    // of the splits into an even number of pages, keep the one whose fullest and emptiest pages are closest
+    var want = pages.length + pages.length % 2;
+    var best = pages.length === want ? pages : null;
+    var bestSpread = best ? loadSpread(best) : Infinity;
+    for (var k = 1; k > 0.4; k -= 0.02) {
       var tryPages = fill(groups, k, true);
       if (tryPages.length > want) break;
       if (tryPages.length !== want) continue;
-      var loads = tryPages.map(function (pg, i) {
-        var w = pg.reduce(function (sum, part) {
-          return sum + W_GROUP + part.items.reduce(function (t, it) { return t + itemWeight(it); }, 0);
-        }, 0);
-        return w / (i ? BUDGET_NEXT : BUDGET_FIRST);
-      });
-      var spread = Math.max.apply(null, loads) - Math.min.apply(null, loads);
+      var spread = loadSpread(tryPages);
       if (spread < bestSpread) { bestSpread = spread; best = tryPages; }
     }
     return best || pages;
+  }
+
+  function loadSpread(pages) {
+    var loads = pages.map(function (pg, i) {
+      var w = pg.reduce(function (sum, part) {
+        return sum + W_GROUP + part.items.reduce(function (t, it) { return t + itemWeight(it); }, 0);
+      }, 0);
+      return w / (i ? BUDGET_NEXT : BUDGET_FIRST);
+    });
+    return Math.max.apply(null, loads) - Math.min.apply(null, loads);
   }
 
   function fill(groups, scale, loose) {
