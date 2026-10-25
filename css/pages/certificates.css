@@ -234,6 +234,8 @@
 .cert--feature { --ar: 1.7778; }
 .cert--feature .cert-doc.is-out .figure__mount { opacity: 0; transition: none; }
 .cert--feature .figure__clip { left: 12%; }
+.cert-feature__fig.figure.cert-doc--portrait { width: 80%; }
+.cert--feature .cert-doc--portrait .figure__clip { left: 18%; }
 
 .cert--feature .cert__body { padding-top: .3rem; }
 .cert__type {
@@ -311,6 +313,7 @@
   .cert__meta .sep { display: none; }
   .cert__docs { align-items: stretch; }
   .cert-feature__fig.figure { width: 88%; margin-left: .2rem; }
+  .cert-feature__fig.figure.cert-doc--portrait { width: 60%; }
   .cert-feature__note { align-self: flex-end; margin-top: .2rem; }
   .cert--feature .cert__body { padding-top: 0; }
   .cert-group__head { gap: .5rem; }

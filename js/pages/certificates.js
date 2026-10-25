@@ -329,7 +329,10 @@ window.Notebook = window.Notebook || {};
         if (img.naturalWidth > 1 && img.naturalHeight > 1) {
           var ar = (img.naturalWidth / img.naturalHeight).toFixed(4);
           img.style.aspectRatio = img.naturalWidth + ' / ' + img.naturalHeight;
-          if (holder) holder.style.setProperty('--ar', ar);
+          if (holder) {
+            holder.style.setProperty('--ar', ar);
+            holder.classList.toggle('cert-doc--portrait', ar < 1);   // a portrait page: narrower, so it is not taller than the rest
+          }
         }
         if (holder) holder.classList.add('is-loaded');
       };
