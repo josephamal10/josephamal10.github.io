@@ -709,15 +709,41 @@ window.Notebook = window.Notebook || {};
                 right: problems solved, technologies, team, evidence; "End of P-0N"
      A project with no picture, sketch or key numbers keeps to one spread. */
 
-  // "Live demo ↗" and "GitHub ↗", right under the project's title.
+  // The buttons right under the project's title: "Live demo", "GitHub", "Watch demo" (a short
+  // tour that opens over the page) or "View slides" (a PDF), each with its icon.
+  var ACTION_ICONS = {
+    demo: 'M5 3.5v9l7.5-4.5z',
+    video: 'M2 3.5h9v9H2zM11 7l3.5-2v6L11 9z',
+    doc: 'M3.5 1.5h6l3 3v10h-9zM9.5 1.5v3h3M5.5 8h5M5.5 10.5h5M5.5 13h3',
+    code: 'M8 .2a8 8 0 0 0-2.53 15.59c.4.07.55-.17.55-.38v-1.33c-2.23.48-2.7-1.07-2.7-1.07-.36-.92-.89-1.17-.89-1.17-.73-.5.06-.49.06-.49.8.06 1.23.83 1.23.83.71 1.22 1.87.87 2.33.66.07-.52.28-.87.5-1.07-1.78-.2-3.65-.89-3.65-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82a7.6 7.6 0 0 1 4 0c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.28.82 2.15 0 3.07-1.87 3.75-3.66 3.95.29.25.54.73.54 1.48v2.2c0 .21.15.46.55.38A8 8 0 0 0 8 .2z'
+  };
+  function actionIcon(kind) {
+    var d = ACTION_ICONS[kind];
+    if (!d || !N.svg) return null;
+    var filled = kind === 'demo' || kind === 'code';
+    return N.svg('svg', { class: 'pj-action__icon', viewBox: '0 0 16 16', 'aria-hidden': 'true', focusable: 'false' },
+      N.svg('path', filled ? { d: d, fill: 'currentColor' }
+        : { d: d, fill: 'none', stroke: 'currentColor', 'stroke-width': '1.4', 'stroke-linejoin': 'round', 'stroke-linecap': 'round' }));
+  }
   function actionsRow(p) {
-    var links = list(p.links).filter(function (l) { return l && present(l.url); });
+    var links = list(p.links).filter(function (l) { return l && (present(l.url) || (l.kind === 'video' && present(l.src))); });
     if (!links.length) return null;
     return h('div', { class: 'pj-actions' }, links.map(function (l) {
-      return h('a', { class: 'pj-action pj-action--' + (l.kind || 'link'), href: l.url, target: '_blank', rel: 'noopener' },
-        h('span', { class: 'pj-action__label' }, l.label, h('span', { 'aria-hidden': 'true' }, ' \u2197')),
-        present(l.note) ? h('span', { class: 'pj-action__note' }, l.note) : null,
-        h('span', { class: 'visually-hidden' }, ' (opens in a new tab)'));
+      var kind = l.kind || 'link';
+      var inner = [
+        h('span', { class: 'pj-action__label' }, actionIcon(kind), h('span', null, l.label),
+          kind === 'video' ? null : h('span', { class: 'pj-action__arrow', 'aria-hidden': 'true' }, '↗')),
+        present(l.note) ? h('span', { class: 'pj-action__note' }, l.note) : null
+      ];
+      if (kind === 'video') {
+        var btn = h('button', { type: 'button', class: 'pj-action pj-action--video', 'aria-haspopup': 'dialog' }, inner);
+        btn.addEventListener('click', function () {
+          if (N.lightbox) N.lightbox.open({ src: l.src, alt: l.alt || l.label, caption: l.note || l.label }, btn);
+        });
+        return btn;
+      }
+      return h('a', { class: 'pj-action pj-action--' + kind, href: l.url, target: '_blank', rel: 'noopener' },
+        inner, h('span', { class: 'visually-hidden' }, ' (opens in a new tab)'));
     }));
   }
 

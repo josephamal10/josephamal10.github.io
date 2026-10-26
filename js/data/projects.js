@@ -3,7 +3,7 @@ Notebook.data = Notebook.data || {};
 
 // Optional fields per project: role, labels ({ purpose, howItWorks, shot }), sketch, challenges, comparison,
 // comparison2, stats ([[number, label]]), team, paper, image, code, evidence (certificate ids),
-// links ([{ label, url, kind: 'demo' | 'code', note }]), learned,
+// links ([{ label, url, kind: 'demo' | 'code' | 'doc', note }] or { label, kind: 'video', src, alt, note }), learned,
 // spreads (1 or 2: overrides how many spreads the project gets; code is shown only with 2).
 // Anything null or empty is simply not shown.
 Notebook.data.projects = [
@@ -189,7 +189,9 @@ Notebook.data.projects = [
     image: null,
     code: null,
     evidence: [],
-    links: [],
+    links: [
+      { label: 'View slides', url: 'assets/docs/defi-slides.pdf', kind: 'doc', note: 'The 10 slides presented at ATNEAI 2026' }
+    ],
     learned: null
   },
   {
@@ -218,6 +220,7 @@ Notebook.data.projects = [
       steps: ['Question (+ chat history)', 'Router: 4 routes', 'Search + rerank: 1,802 passages', 'Answer with citations']
     },
     links: [
+      { label: 'Live demo', url: 'https://caddieai.streamlit.app', kind: 'demo', note: 'Ask a golf question · wakes in about 30 s' },
       { label: 'GitHub', url: 'https://github.com/josephamal10/CaddieAI', kind: 'code' }
     ],
     image: null,
@@ -433,6 +436,8 @@ Notebook.data.projects = [
       steps: ['Tap and look at the camera', 'Blink: a real person is there', 'Live face, not a photo or screen', 'Recognised: checked in or out']
     },
     links: [
+      // a Windows app with a camera, so no web demo: the README's 30-second tour (made-up demo data) instead
+      { label: 'Watch demo', kind: 'video', src: 'assets/img/projects/kiosk-tour.webp', alt: 'A 30-second tour of the kiosk: the lock screen in English and Tamil, a check-in, My dashboard and the admin console', note: '30-second tour of the app' },
       { label: 'GitHub', url: 'https://github.com/josephamal10/smart-attendance-kiosk', kind: 'code' }
     ],
     image: {

@@ -462,27 +462,38 @@
 }
 .pj-work--end .pj-end { margin-top: 0; }
 
-/* ---- Live demo / GitHub, under the project's title ---- */
-.pj-actions { display: flex; flex-wrap: wrap; gap: .6rem; margin: -.35rem 0 1.05rem; }
+/* ---- Live demo / GitHub / Watch demo / View slides, under the project's title ---- */
+.pj-actions { display: flex; flex-wrap: wrap; gap: .55rem .6rem; margin: -.3rem 0 1.05rem; }
 .pj-action {
   display: inline-flex;
   flex-direction: column;
-  gap: .22rem;
-  padding: .5rem .8rem .45rem;
-  border: 1.5px solid var(--ink-2);
-  border-radius: 2px;
-  background: rgba(255, 246, 226, .55);
+  justify-content: center;
+  gap: .28rem;
+  min-height: 2.5rem;
+  padding: .5rem .85rem .46rem;
+  border: 1.5px solid var(--ink);
+  border-radius: 4px;
+  background: rgba(255, 246, 226, .6);
   color: var(--ink);
+  font: inherit;
+  text-align: left;
   text-decoration: none;
-  box-shadow: 0 1px 0 rgba(60, 38, 16, .18);
-  transition: background-color .15s ease, color .15s ease;
+  cursor: pointer;
+  box-shadow: 0 1px 0 rgba(60, 38, 16, .22), 0 3px 8px -5px rgba(40, 28, 10, .45);
+  transition: transform .15s ease, box-shadow .15s ease, background-color .15s ease, color .15s ease;
 }
-.pj-action__label { font: 600 var(--fs-xs)/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; }
+.pj-action__label { display: inline-flex; align-items: center; gap: .45rem; font: 700 var(--fs-xs)/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; }
+.pj-action__icon { width: .95rem; height: .95rem; flex: none; }
+.pj-action__arrow { opacity: .75; }
 .pj-action__note { font: italic 400 .74rem/1.1 var(--font-serif); color: var(--ink-3); }
-.pj-action--demo { border-color: var(--stamp); color: var(--stamp); }
-.pj-action:hover { background: var(--ink); color: #f3e6ca; }
-.pj-action:hover .pj-action__note { color: #e3cfa8; }
-.pj-action--demo:hover { background: var(--stamp); }
+/* the two main buttons are solid: Live demo in the stamp red, GitHub in ink */
+.pj-action--demo { background: var(--stamp); border-color: var(--stamp); color: #fbf1dc; }
+.pj-action--code { background: var(--ink); border-color: var(--ink); color: #f3e6ca; }
+.pj-action--demo .pj-action__note, .pj-action--code .pj-action__note { color: rgba(251, 241, 220, .82); }
+.pj-action--video, .pj-action--doc { border-color: var(--stamp); color: var(--stamp); }
+.pj-action:hover { transform: translateY(-1px); box-shadow: 0 2px 0 rgba(60, 38, 16, .22), 0 8px 14px -8px rgba(40, 28, 10, .55); }
+.pj-action--video:hover, .pj-action--doc:hover { background: var(--stamp); color: #fbf1dc; }
+.pj-action--video:hover .pj-action__note, .pj-action--doc:hover .pj-action__note { color: rgba(251, 241, 220, .82); }
 .pj-action:focus-visible { outline: 2px solid var(--focus-paper); outline-offset: 2px; }
 .pj-lede + .pj-flow { margin-top: 1.1rem; }
 
@@ -498,7 +509,7 @@
 .pj-stat__num { font: 600 1.55rem/1 var(--font-display); letter-spacing: .01em; color: var(--ink); }
 .pj-stat__label { margin-top: .3rem; font: italic 400 var(--fs-sm)/1.25 var(--font-serif); color: var(--ink-2); }
 .pj-work .pj-photo { margin: .4rem auto 0; max-width: 94%; }
-@media (prefers-reduced-motion: reduce) { .pj-action { transition: none; } }
+@media (prefers-reduced-motion: reduce) { .pj-action { transition: none; } .pj-action:hover { transform: none; } }
 /* one spread: the picture shares its page with the paper, team and evidence */
 .pj-work--single .pj-photo { max-width: 68%; }
 
