@@ -214,13 +214,18 @@ window.Notebook = window.Notebook || {};
     return [h('div', { class: 'sk-col' }, left), h('div', { class: 'sk-col' }, right)];
   }
 
-  // The groups are shared out over the spread: the first half on the left page, the rest
-  // on the right (part 0 / part 1).
+  // The groups are shared out over the spread: the first ones on the left page, the rest on
+  // the right (part 0 / part 1). The right page also carries the certificates and soft skills,
+  // so the left takes about 60% of the entries (a group and its heading), whole groups only.
+  var LEFT_SHARE = 0.6;
   function parts(data, part) {
     var sk = data.skills || {};
     var usedIn = sk.usedIn || {};
     var all = (sk.groups || []).filter(function (g) { return (g.items || []).filter(present).length; });
-    var half = Math.ceil(all.length / 2);
+    var sizes = all.map(function (g) { return (g.items || []).filter(present).length + 1; });
+    var target = sizes.reduce(function (a, b) { return a + b; }, 0) * LEFT_SHARE;
+    var half = 0, acc = 0;
+    while (half < all.length - 1 && (half === 0 || acc + sizes[half] / 2 <= target)) acc += sizes[half++];
     var mine = part ? all.slice(half) : all.slice(0, half);
     var anyUsed = all.some(function (g) {
       return (g.items || []).some(function (it) { return present(usedIn[it]); });

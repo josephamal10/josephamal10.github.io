@@ -82,7 +82,7 @@ window.Notebook = window.Notebook || {};
     'Flask': ['flask'], 'Blynk Cloud Platform': ['blynk'], 'IoT Sensors & Communication Protocols': ['iot', 'sensors', 'internet of things'],
     'Git/GitHub': ['git', 'github'], 'Google Colab': ['colab', 'google colab'], 'Jupyter': ['jupyter'], 'Cursor': ['cursor'],
     'PyTorch': ['pytorch', 'torch'], 'CNN-LSTM architectures': ['cnn', 'lstm', 'bilstm', 'cnn lstm'],
-    'Model fine-tuning and domain adaptation': ['fine tuning', 'finetuning', 'fine tune', 'domain adaptation'],
+    'Model fine-tuning': ['fine tuning', 'finetuning', 'fine tune', 'domain adaptation'],
     'Class-imbalance handling (weighted sampling)': ['class imbalance', 'imbalanced', 'weighted sampling'],
     'Evaluation metrics (EER, precision, recall)': ['eer', 'equal error rate', 'precision', 'recall', 'evaluation metrics'],
     'Librosa': ['librosa'], 'Torchaudio': ['torchaudio'], 'Audio feature extraction': ['audio features', 'feature extraction', 'mfcc', 'mfccs'],
@@ -107,7 +107,7 @@ window.Notebook = window.Notebook || {};
     'Face detection and recognition (YuNet, SFace)': ['face recognition', 'face detection', 'facial recognition', 'yunet', 'sface'],
     'Face anti-spoofing and liveness': ['liveness', 'face spoofing', 'presentation attack', 'blink detection'], 'SQLite': ['sqlite'], 'Streaming responses (Server-Sent Events)': ['streaming', 'server sent events', 'sse'],
     'Query routing and follow-up rewriting': ['query routing', 'query rewriting', 'follow up questions'],
-    'Cloud deployment (Modal, Render, Vercel)': ['deployment', 'deploy', 'render', 'vercel', 'modal'], 'ONNX Runtime (int8 quantization)': ['onnx', 'quantization', 'quantisation']
+    'Cloud deployment (Modal, Render, Vercel)': ['deployment', 'deploy', 'render', 'vercel', 'modal'], 'ONNX Runtime': ['onnx', 'quantization', 'quantisation']
   };
   // Things a visitor might ask about that are not in the notebook: answered honestly.
   var OTHER_TECH = ['angular', 'vue', 'nodejs', 'django', 'aws', 'azure', 'gcp', 'kubernetes',
