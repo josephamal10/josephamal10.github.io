@@ -404,5 +404,78 @@ Notebook.data.projects = [
     code: null,
     evidence: [],
     learned: null
+  },
+  {
+    // From the repo (C:/portfolio/TECHNERDZATT, github.com/josephamal10/smart-attendance-kiosk): README, ml/README.md,
+    // reports/face_benchmark.json, ml/antispoof/README.md, 135 tests (pytest --collect-only), git history.
+    // A personal project built alone (Joseph, Oct 2026); a working prototype, not in use at a company. First version
+    // mid-2026, rebuilt 12–25 Oct 2026. The demo data is made up; the screenshot is cropped so no company name shows.
+    id: 'smart-attendance-kiosk',
+    number: '07',
+    title: 'Smart Attendance Kiosk',
+    kind: 'Face-recognition attendance kiosk · personal project',
+    period: { start: '2026-05', end: '2026-10', label: 'May 2026 · rebuilt Oct 2026' },
+    role: 'Built it end to end, alone',
+    labels: { purpose: 'What it is for', howItWorks: 'How a check-in works', shot: 'In use', challenges: 'Problems solved', results: 'Face recognition, measured', notes: 'Problems solved and tools' },
+    spreads: 2,
+    summary: 'Employees check in by looking at a camera and blinking: no cards, no passwords. A blink check and an anti-spoofing model make sure a real face is there before face recognition says who it is.',
+    purpose: 'Small offices still sign attendance registers or use cards that get lent to friends. The kiosk records who came in and when, and gives HR the reports: lateness, leave, overtime and a monthly register in Excel. Each employee also has their own dashboard, opened at the kiosk by face. It speaks English, Tamil and Hindi.',
+    howItWorks: [
+      'Tap the lock screen and the camera opens; nobody types anything.',
+      'Blink once: the server tracks 478 face landmarks and gives a one-time pass, valid for 60 seconds, only after a real blink.',
+      'An anti-spoofing model checks the face is live, not a printed photo or a phone screen.',
+      'Face recognition compares the face with each employee’s ~30 registered photos; the best match must clear a strict threshold and beat the runner-up.',
+      'The first scan of the day checks in, a later one checks out, and the kiosk greets the person by name.'
+    ],
+    sketch: {
+      type: 'flow',
+      caption: 'How a check-in works',
+      steps: ['Tap and look at the camera', 'Blink: a real person is there', 'Live face, not a photo or screen', 'Recognised: checked in or out']
+    },
+    links: [
+      { label: 'GitHub', url: 'https://github.com/josephamal10/smart-attendance-kiosk', kind: 'code' }
+    ],
+    image: {
+      src: 'assets/img/projects/kiosk-checkin.webp',
+      srcSmall: 'assets/img/projects/kiosk-checkin-sm.webp',
+      width: 1200,
+      height: 614,
+      alt: 'The kiosk after a check-in: “Good morning, Priya! Checked in 9:12 AM, On time”, beside the clock and the three check-in steps',
+      caption: 'A check-in, with made-up demo staff'
+    },
+    stats: [['99.1%', 'face verification accuracy (LFW)'], ['35 ms', 'to find and read a face, 31× faster than dlib'], ['0 / 3,000', 'impostors let in at the chosen setting'], ['135', 'automated tests']],
+    comparison: {
+      caption: 'Face recognition engines · LFW, 6,000 pairs, 10-fold',
+      columns: ['', 'dlib', 'YuNet + SFace (used)'],
+      rows: [
+        ['Accuracy', '98.52%', '99.10%'],
+        ['Genuine accepted, 1% impostors pass', '98.03%', '98.93%'],
+        ['Genuine accepted, 0.1% impostors pass', '92.53%', '98.13%'],
+        ['Images where no face was found', '33', '0'],
+        ['Time per 1080p frame (CPU)', '1,102 ms', '35 ms']
+      ]
+    },
+    comparison2: {
+      caption: 'Choosing how strict to be · SFace on LFW pairs',
+      columns: ['Threshold', 'Genuine accepted', 'Impostors accepted'],
+      rows: [
+        ['0.30', '98.87%', '22 of 3,000'],
+        ['0.363 (OpenCV’s default)', '98.00%', '3 of 3,000'],
+        ['0.40', '97.03%', '1 of 3,000'],
+        ['0.45 (used)', '95.17%', '0 of 3,000']
+      ]
+    },
+    challenges: [
+      'Benchmarked before choosing: YuNet + SFace beat dlib most at strict settings and runs 31× faster on a CPU, so dlib was replaced.',
+      'A strict threshold (0.45): each face is compared with ~30 photos, which gives an impostor 30 chances too.',
+      'Liveness is enforced on the server: check-in is refused without the one-time pass that only a blink earns.',
+      'Anti-spoofing at about 7 ms a face, rejecting none of 126 real faces; an 8-bit version was smaller but not faster and shifted scores, so the full one runs. Attack detection still needs measuring on real attack recordings.',
+      'Read-only HR accounts are enforced by the API, not just hidden buttons.'
+    ],
+    technologies: ['Python', 'FastAPI', 'OpenCV (YuNet + SFace)', 'MediaPipe Face Landmarker', 'Face anti-spoofing (MiniFASNet)', 'ONNX Runtime', 'PyTorch (training and export)', 'SQLAlchemy + Alembic', 'JWT + bcrypt', 'Flutter (Windows and web)', 'Docker', 'GitHub Actions', 'pytest'],
+    team: null,
+    code: null,
+    evidence: [],
+    learned: null
   }
 ];

@@ -36,6 +36,16 @@ Notebook.data.skills = {
       ]
     },
     {
+      id: 'computer-vision',
+      label: 'Computer vision',
+      items: [
+        'OpenCV',
+        'Face detection and recognition (YuNet, SFace)',
+        'Face anti-spoofing and liveness',
+        'MediaPipe'
+      ]
+    },
+    {
       id: 'llm-genai',
       label: 'LLM and GenAI',
       items: [
@@ -57,7 +67,7 @@ Notebook.data.skills = {
     {
       id: 'backend-apps',
       label: 'Backend and apps',
-      items: ['FastAPI', 'NestJS', 'REST APIs', 'Streaming responses (Server-Sent Events)', 'React', 'PostgreSQL', 'SQLite', 'Streamlit', 'Flask']
+      items: ['FastAPI', 'NestJS', 'REST APIs', 'Streaming responses (Server-Sent Events)', 'React', 'Flutter', 'PostgreSQL', 'SQLite', 'Streamlit', 'Flask']
     },
     {
       id: 'data-ml',
@@ -84,9 +94,14 @@ Notebook.data.skills = {
   ],
 
   usedIn: {
-    'Python': ['confident-talk-analyzer', 'synthetic-voice-detection'],
+    'Python': ['confident-talk-analyzer', 'synthetic-voice-detection', 'smart-attendance-kiosk'],
     'Google Colab': ['synthetic-voice-detection'],
-    'PyTorch': ['synthetic-voice-detection'],
+    'PyTorch': ['synthetic-voice-detection', 'smart-attendance-kiosk'],
+    'OpenCV': ['smart-attendance-kiosk'],
+    'Face detection and recognition (YuNet, SFace)': ['smart-attendance-kiosk'],
+    'Face anti-spoofing and liveness': ['smart-attendance-kiosk'],
+    'MediaPipe': ['smart-attendance-kiosk'],
+    'Flutter': ['smart-attendance-kiosk'],
     'CNN-LSTM architectures': ['synthetic-voice-detection'],
     'Model fine-tuning and domain adaptation': ['synthetic-voice-detection'],
     'Class-imbalance handling (weighted sampling)': ['synthetic-voice-detection'],
@@ -103,22 +118,22 @@ Notebook.data.skills = {
     'PostgreSQL': ['confident-talk-analyzer'],
     'NumPy': ['confident-talk-analyzer', 'synthetic-voice-detection'],
     'scikit-learn': ['synthetic-voice-detection'],
-    'Docker': ['confident-talk-analyzer', 'rag-golf-assistant', 'rag-knowledge-base-api'],
-    'GitHub Actions (CI)': ['confident-talk-analyzer', 'rag-golf-assistant', 'rag-knowledge-base-api'],
-    'pytest': ['confident-talk-analyzer', 'rag-golf-assistant'],
-    'ONNX Runtime (int8 quantization)': ['confident-talk-analyzer'],
+    'Docker': ['confident-talk-analyzer', 'rag-golf-assistant', 'rag-knowledge-base-api', 'smart-attendance-kiosk'],
+    'GitHub Actions (CI)': ['confident-talk-analyzer', 'rag-golf-assistant', 'rag-knowledge-base-api', 'smart-attendance-kiosk'],
+    'pytest': ['confident-talk-analyzer', 'rag-golf-assistant', 'smart-attendance-kiosk'],
+    'ONNX Runtime (int8 quantization)': ['confident-talk-analyzer', 'smart-attendance-kiosk'],
     'TypeScript': ['rag-knowledge-base-api'],
     'NestJS': ['rag-knowledge-base-api'],
     'Hybrid search (Upstash Vector)': ['rag-knowledge-base-api'],
     'Model Context Protocol (MCP)': ['rag-knowledge-base-api'],
     'Gemini API': ['rag-golf-assistant', 'rag-knowledge-base-api'],
-    'FastAPI': ['rag-golf-assistant'],
+    'FastAPI': ['rag-golf-assistant', 'smart-attendance-kiosk'],
     'Vector databases (Pinecone, Upstash)': ['rag-golf-assistant', 'rag-knowledge-base-api'],
     'Embeddings (Jina, Gemini)': ['rag-golf-assistant', 'rag-knowledge-base-api'],
     'Query routing and follow-up rewriting': ['rag-golf-assistant', 'rag-knowledge-base-api'],
     'Streaming responses (Server-Sent Events)': ['rag-knowledge-base-api'],
     'React': ['rag-knowledge-base-api'],
-    'SQLite': ['confident-talk-analyzer', 'synthetic-voice-detection', 'rag-knowledge-base-api'],
+    'SQLite': ['confident-talk-analyzer', 'synthetic-voice-detection', 'rag-knowledge-base-api', 'smart-attendance-kiosk'],
     'Jest and Vitest': ['rag-knowledge-base-api'],
     'Cloud deployment (Modal, Render, Vercel)': ['confident-talk-analyzer', 'rag-knowledge-base-api'],
     'REST APIs': ['rag-golf-assistant', 'rag-knowledge-base-api'],

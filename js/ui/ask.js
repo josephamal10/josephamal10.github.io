@@ -102,13 +102,16 @@ window.Notebook = window.Notebook || {};
     'NumPy': ['numpy'], 'Pandas': ['pandas'], 'scikit-learn': ['scikit', 'sklearn', 'scikit learn'],
     'Docker': ['docker', 'containers'], 'GitHub Actions (CI)': ['github actions', 'ci cd', 'cicd', 'continuous integration'],
     'pytest': ['pytest', 'unit tests', 'unit testing'], 'Jest and Vitest': ['jest', 'vitest'],
-    'React': ['react', 'reactjs', 'react js'], 'SQLite': ['sqlite'], 'Streaming responses (Server-Sent Events)': ['streaming', 'server sent events', 'sse'],
+    'React': ['react', 'reactjs', 'react js'], 'Flutter': ['flutter', 'dart'],
+    'OpenCV': ['opencv', 'open cv', 'computer vision', 'image processing'], 'MediaPipe': ['mediapipe', 'media pipe', 'face landmarks'],
+    'Face detection and recognition (YuNet, SFace)': ['face recognition', 'face detection', 'facial recognition', 'yunet', 'sface'],
+    'Face anti-spoofing and liveness': ['liveness', 'face spoofing', 'presentation attack', 'blink detection'], 'SQLite': ['sqlite'], 'Streaming responses (Server-Sent Events)': ['streaming', 'server sent events', 'sse'],
     'Query routing and follow-up rewriting': ['query routing', 'query rewriting', 'follow up questions'],
     'Cloud deployment (Modal, Render, Vercel)': ['deployment', 'deploy', 'render', 'vercel', 'modal'], 'ONNX Runtime (int8 quantization)': ['onnx', 'quantization', 'quantisation']
   };
   // Things a visitor might ask about that are not in the notebook: answered honestly.
   var OTHER_TECH = ['angular', 'vue', 'nodejs', 'django', 'aws', 'azure', 'gcp', 'kubernetes',
-    'php', 'ruby', 'golang', 'rust', 'kotlin', 'swift', 'flutter', 'excel', 'power bi',
+    'php', 'ruby', 'golang', 'rust', 'kotlin', 'swift', 'excel', 'power bi',
     'tableau', 'figma', 'linux', 'dotnet', 'scala', 'matlab', 'photoshop'];
 
   function projectWords(p) {
@@ -116,6 +119,7 @@ window.Notebook = window.Notebook || {};
       'confident-talk-analyzer': ['confident', 'speech', 'voice', 'analyzer', 'analyser', 'confidence'],
       'automatic-garage': ['garage', 'blynk', 'iot', 'servo', 'smart garage', 'door'],
       'defi-presentation': ['blockchain', 'defi', 'decentralized', 'decentralised', 'finance', 'smart contracts', 'ethereum', 'crypto'],
+      'smart-attendance-kiosk': ['attendance', 'kiosk', 'face recognition', 'facial recognition', 'check in', 'check-in', 'anti spoofing face', 'liveness', 'flutter'],
       'rag-knowledge-base-api': ['knowledge base', 'nestjs', 'upstash', 'mcp', 'hybrid search', 'voice bot', 'knowledge base api', 'aparna', 'react', 'streaming', 'chat app'],
       'rag-golf-assistant': ['caddieai', 'caddie', 'rag', 'golf', 'golfer', 'golfers', 'courserev', 'retrieval', 'chatbot', 'question answering', 'assistant', 'pinecone', 'jina'],
       'synthetic-voice-detection': ['synthetic', 'synthetic voice', 'voice detection', 'deepfake', 'deepfakes', 'deep fake', 'cloned voice',
