@@ -253,7 +253,7 @@ Notebook.data.projects = [
     id: 'synthetic-voice-detection',
     number: '05',
     title: 'Synthetic Voice Detection System',
-    kind: 'Deep learning · voice anti-spoofing · internship at Nanonino',
+    kind: 'Deep learning · voice anti-spoofing · college project, guided by Nanonino',
     period: { start: '2026-08', end: '2026-09', label: 'Aug – Sep 2026' },
     role: 'Built it end to end, as the only developer',
     summary: 'A deep learning system that tells a real human voice from an AI-generated or cloned one, and shows the evidence behind its verdict.',

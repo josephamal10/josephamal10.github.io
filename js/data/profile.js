@@ -36,7 +36,7 @@ Notebook.data.profile = {
   languages: [
     { name: 'English', level: 'Fluent' },
     { name: 'Tamil', level: 'Fluent' },
-    { name: 'Malayalam', level: 'Intermediate' },
+    { name: 'Malayalam', level: 'Native' },
     { name: 'French', level: 'Basic' }
   ],
 
