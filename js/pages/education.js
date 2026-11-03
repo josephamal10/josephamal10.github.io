@@ -80,11 +80,6 @@ window.Notebook = window.Notebook || {};
       if (xp && present(xp.organization) && present(xp.engagement)) {
         notes.push(h('li', null, xp.engagement.replace(/\.$/, '') + ' at ' + xp.organization + ' ', sectionRef('experience', 'see')));
       }
-      (data.recognition || []).forEach(function (r) {
-        if (r && /academic excellence/i.test(r.title || '')) {
-          notes.push(h('li', null, 'Recognised for academic excellence ', sectionRef('achievements', 'see')));
-        }
-      });
       if (!notes.length) return null;
       return h('div', { class: 'edu-notes' },
         h('h4', { class: 'edu-notes__head' }, 'Alongside the degree'),

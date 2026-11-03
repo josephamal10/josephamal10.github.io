@@ -65,10 +65,10 @@ Notebook.data.recognition = [
     links: [{ label: 'Our proposal', url: 'assets/docs/sih-2025-tripzap.pdf', kind: 'doc', note: 'TripZap · 6 slides, PDF' }]
   },
   {
-    id: 'department',
-    title: 'Academic excellence and Event Coordinator',
-    detail: 'Recognised for academic excellence, and served as an Event Coordinator of the college department.',
-    date: null,
+    id: 'dexia-coordinator',
+    title: 'Overall Coordinator, Dexia24',
+    detail: 'Overall coordinator of Dexia24, the annual event of the Department of Software Systems and AIML, Sri Krishna Arts and Science College.',
+    date: { iso: '2024', label: '2024' },
     evidence: null,
     project: null
   }
